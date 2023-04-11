@@ -1,12 +1,10 @@
 {
-  "name": "vditor",
-  "version": "3.9.1",
-  "description": "♏ 易于使用的 Markdown 编辑器，为适配不同的应用场景而生",
-  "author": "Vanessa <v@b3log.org> (http://vanessa.b3log.org)",
-  "homepage": "https://b3log.org/vditor",
+  "name": "ficus-editor",
+  "version": "1.0.0",
+  "description": "Ficus项目中的editor模块，基于Vidtor实现",
+  "author": "",
   "jsdelivr": "dist/index.min.js",
   "main": "dist/index.min.js",
-  "funding": "https://ld246.com/sponsor",
   "files": [
     "dist/*",
     "src/index.ts",
