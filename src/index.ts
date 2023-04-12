@@ -446,6 +446,12 @@ class Vditor extends VditorMethod {
         setEditMode(this.vditor, targetMode, getMarkdown(this.vditor));
     }
 
+    /** 隐藏Toolbar **/
+    public hideToorBar() {
+        this.vditor.toolbar.element.style.display = "none"
+    }
+
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
