@@ -69,6 +69,7 @@ export class Toolbar {
         }
     }
 
+    // 生成MenuItem实例或者子类实例，返回对应的DOM
     private genItem(vditor: IVditor, menuItem: IMenuItem, index: number) {
         let menuItemObj;
         switch (menuItem.name) {

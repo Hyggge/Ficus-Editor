@@ -6,6 +6,7 @@ import {updateHotkeyTip} from "../util/compatibility";
 import {toolbarEvent} from "../wysiwyg/toolbarEvent";
 
 export class MenuItem {
+    // 一般情况下生成div或者button元素，其子元素为icon
     public element: HTMLElement;
 
     constructor(vditor: IVditor, menuItem: IMenuItem) {

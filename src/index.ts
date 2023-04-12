@@ -35,6 +35,7 @@ import {afterRenderEvent} from "./ts/wysiwyg/afterRenderEvent";
 import {WYSIWYG} from "./ts/wysiwyg/index";
 import {input} from "./ts/wysiwyg/input";
 import {renderDomByMd} from "./ts/wysiwyg/renderDomByMd";
+import {setEditMode} from "./ts/toolbar/EditMode"
 
 class Vditor extends VditorMethod {
     public readonly version: string;
@@ -438,6 +439,11 @@ class Vditor extends VditorMethod {
             enableHint: false,
             enableInput: false,
         });
+    }
+
+    /** 切换模式 **/
+    public changeEditMode(targetMode: string) {
+        setEditMode(this.vditor, targetMode, getMarkdown(this.vditor));
     }
 
     private init(id: HTMLElement, mergedOptions: IOptions) {

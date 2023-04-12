@@ -414,15 +414,19 @@ export class Options {
             },
         ];
         const toolbarResult: IMenuItem[] = [];
+        // toolbar是用户写在options中的toolbar列表，或者是默认的defaultOptions.toobar
         toolbar.forEach((menuItem: IMenuItem) => {
             let currentMenuItem = menuItem;
+            // 对于每个用户写的配置，都查看一下有没有在toolbarItem中预定义
             toolbarItem.forEach((defaultMenuItem: IMenuItem) => {
+                // 预定义的，只需要输入字符串
                 if (
                     typeof menuItem === "string" &&
                     defaultMenuItem.name === menuItem
                 ) {
                     currentMenuItem = defaultMenuItem;
                 }
+                // 用户定义的，需要给出完整的对象描述
                 if (
                     typeof menuItem === "object" &&
                     defaultMenuItem.name === menuItem.name
@@ -430,6 +434,7 @@ export class Options {
                     currentMenuItem = Object.assign({}, defaultMenuItem, menuItem);
                 }
             });
+            // 如果配置有嵌套，递归调用
             if (menuItem.toolbar) {
                 currentMenuItem.toolbar = this.mergeToolbar(menuItem.toolbar);
             }
