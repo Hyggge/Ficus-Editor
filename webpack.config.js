@@ -14,8 +14,9 @@ const TerserPlugin = require('terser-webpack-plugin')
 const BundleAnalyzerPlugin = require(
   'webpack-bundle-analyzer').BundleAnalyzerPlugin
 const pkg = require('./package.json')
+const VditorVersion = pkg["vditor-version"]
 const banner = new webpack.BannerPlugin({
-  banner: `Vditor v${pkg.version} - A markdown editor written in TypeScript.
+  banner: `Vditor v${VditorVersion} - A markdown editor written in TypeScript.
 
 MIT License
 
@@ -49,7 +50,7 @@ module.exports = [
       filename: '[name].js',
       path: path.resolve(__dirname, 'dist'),
       // chunkFilename: '[name].bundle.js',
-      // publicPath: `${pkg.cdn}/vditor@${pkg.version}/dist/`,
+      // publicPath: `${pkg.cdn}/vditor@${VditorVersion}/dist/`,
       libraryTarget: 'umd',
       library: 'Vditor',
       libraryExport: 'default',
@@ -150,7 +151,7 @@ module.exports = [
           path.join(__dirname, 'dist')],
       }),
       new webpack.DefinePlugin({
-        VDITOR_VERSION: JSON.stringify(pkg.version),
+        VDITOR_VERSION: JSON.stringify(VditorVersion),
       }),
       new MiniCssExtractPlugin({
         filename: 'index.css',

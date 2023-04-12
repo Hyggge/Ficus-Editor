@@ -11,6 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 
 const pkg = require('./package.json')
+const VditorVersion = pkg["vditor-version"]
 
 module.exports = {
   mode: 'development',
@@ -118,7 +119,7 @@ module.exports = {
       template: './demo/comment.html',
     }),
     new webpack.DefinePlugin({
-      VDITOR_VERSION: JSON.stringify(pkg.version),
+      VDITOR_VERSION: JSON.stringify(VditorVersion),
     }),
     new CopyPlugin({
       patterns: [
