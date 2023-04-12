@@ -1,17 +1,13 @@
 {
   "name": "ficus-editor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "vditor-version": "3.9.1",
   "description": "Ficus项目中的editor模块，基于Vidtor实现",
   "author": "",
   "jsdelivr": "dist/index.min.js",
   "main": "dist/index.min.js",
   "files": [
-    "dist/*",
-    "src/index.ts",
-    "src/method.ts",
-    "src/ts/*",
-    "src/assets/*"
+    "dist/*"
   ],
   "dependencies": {
     "diff-match-patch": "^1.0.5"
