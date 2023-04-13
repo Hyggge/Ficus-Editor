@@ -1,4 +1,5 @@
 declare const VDITOR_VERSION: string;
+declare const FICUS_EDITOR_VERSION: string;
 
 const _VDITOR_VERSION = VDITOR_VERSION;
 
@@ -29,7 +30,8 @@ export abstract class Constants {
     // ext
     "solidity", "yul"
   ];
-  public static readonly CDN = `https://unpkg.com/vditor@${VDITOR_VERSION}`;
+  // public static readonly CDN = `https://unpkg.com/vditor@${VDITOR_VERSION}`;
+  public static readonly CDN = `https://unpkg.com/ficus-editor@${FICUS_EDITOR_VERSION}`;
   public static readonly MARKDOWN_OPTIONS = {
     autoSpace: false,
     codeBlockPreview: true,
