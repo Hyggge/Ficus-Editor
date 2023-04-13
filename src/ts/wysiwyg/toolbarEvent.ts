@@ -142,6 +142,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
     } else {
         // 添加
         if (vditor.wysiwyg.element.childNodes.length === 0) {
+            // 设置编辑器内最上层dom元素
             vditor.wysiwyg.element.innerHTML = '<p data-block="0"><wbr></p>';
             setRangeByWbr(vditor.wysiwyg.element, range);
         }

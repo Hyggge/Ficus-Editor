@@ -34,13 +34,15 @@ export class Toolbar {
     constructor(vditor: IVditor) {
         const options = vditor.options;
         this.elements = {};
-
+        // 创建toolbar对应的dom元素
         this.element = document.createElement("div");
         this.element.className = "vditor-toolbar";
-
+        
+        // 遍历options, 为每一个menuItem创建一个子元素
         options.toolbar.forEach((menuItem: IMenuItem, i: number) => {
             const itemElement = this.genItem(vditor, menuItem, i);
             this.element.appendChild(itemElement);
+            // 如果menuItem也有子元素，生成panel
             if (menuItem.toolbar) {
                 const panelElement = document.createElement("div");
                 panelElement.className = "vditor-hint vditor-panel--arrow";

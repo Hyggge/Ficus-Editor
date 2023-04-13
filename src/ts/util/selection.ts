@@ -5,13 +5,14 @@ import {hasClosestBlock, hasClosestByClassName} from "./hasClosest";
 export const getEditorRange = (vditor: IVditor) => {
     let range: Range;
     const element = vditor[vditor.currentMode].element;
+    // 如果选中了文本
     if (getSelection().rangeCount > 0) {
         range = getSelection().getRangeAt(0);
         if (element.isEqualNode(range.startContainer) || element.contains(range.startContainer)) {
             return range;
         }
     }
-    if (vditor[vditor.currentMode].range) {
+    if (vditor[vditor.currentMode].range) { // ????
         return vditor[vditor.currentMode].range;
     }
     element.focus();
@@ -185,6 +186,7 @@ export const setSelectionByPosition = (start: number, end: number, editor: HTMLE
 };
 
 export const setRangeByWbr = (element: HTMLElement, range: Range) => {
+    // 找到wbr之后随之删除
     const wbrElement = element.querySelector("wbr");
     if (!wbrElement) {
         return;
@@ -231,6 +233,7 @@ export const setRangeByWbr = (element: HTMLElement, range: Range) => {
         }
     }
     range.collapse(true);
+    // 删除wbr
     wbrElement.remove();
     setSelectionFocus(range);
 };
