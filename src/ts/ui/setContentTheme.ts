@@ -6,10 +6,7 @@ export const setContentTheme = (contentTheme: string, path: string) => {
     }
     const vditorContentTheme = document.getElementById("vditorContentTheme") as HTMLLinkElement;
     const cssPath = `${path}/${contentTheme}.css`;
-    if (!vditorContentTheme) {
-        addStyle(cssPath, "vditorContentTheme");
-    } else if (vditorContentTheme.getAttribute("href") !== cssPath) {
-        vditorContentTheme.remove();
+    if (!vditorContentTheme || vditorContentTheme.getAttribute("href") !== cssPath) {
         addStyle(cssPath, "vditorContentTheme");
     }
 };
