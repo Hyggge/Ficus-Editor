@@ -171,7 +171,7 @@ export const processToolbar = (vditor: IVditor, actionBtn: Element, prefix: stri
     if (!blockElement) {
         return;
     }
-    if (commandName === "link") {
+    if (commandName === "link" || commandName === "file-link") {
         let html;
         if (range.toString() === "") {
             html = `${prefix}${Lute.Caret}${suffix}`;

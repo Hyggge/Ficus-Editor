@@ -87,6 +87,7 @@ export class Toolbar {
             case "code":
             case "inline-code":
             case "link":
+            case "file-link":
             case "table":
             case "inline-math":
             case "math-block":

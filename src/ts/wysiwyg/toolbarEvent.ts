@@ -282,9 +282,12 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             }
             setRangeByWbr(vditor.wysiwyg.element, range);
         }
-        else if (commandName === "link") {
+        else if (commandName === "link" || commandName === "file-link") {
             if (range.toString() === "") {
                 const aElement = document.createElement("a");
+                if (commandName === "file-link") {
+                    aElement.classList.add("ficus-filelink");
+                }
                 aElement.innerText = Constants.ZWSP;
                 range.insertNode(aElement);
                 range.setStart(aElement.firstChild, 1);
@@ -296,6 +299,9 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 useRender = false;
             } else {
                 const node = document.createElement("a");
+                if (commandName === "file-link") {
+                    node.classList.add("ficus-filelink");
+                }
                 node.setAttribute("href", "");
                 node.innerHTML = range.toString();
                 range.surroundContents(node);
