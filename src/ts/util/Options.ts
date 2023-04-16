@@ -119,7 +119,8 @@ export class Options {
             "math-block",
             "highlight",
             "sup-script",
-            "sub-script"
+            "sub-script",
+            "underline"
         ],
         toolbarConfig: {
             hide: false,
@@ -231,7 +232,7 @@ export class Options {
                 tipPosition: "n",
             },
             {
-                icom: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                icom: '<svg><use xlink:href="#vditor-icon-link"></use></svg>',
                 name: "file-link",
                 prefix: "-[",
                 suffix: "]()",
@@ -464,6 +465,14 @@ export class Options {
                 prefix: "<sub>",
                 suffix: "</sub>",
                 tip: "sub-script",
+                tipPosition: "ne"
+            },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "underline",
+                prefix: "<u>",
+                suffix: "</u>",
+                tip: "inderline",
                 tipPosition: "ne"
             }
         ];

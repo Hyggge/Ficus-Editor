@@ -9,9 +9,11 @@ import {hidePanel} from "./setToolbar";
 
 export class Headings extends MenuItem {
     public element: HTMLElement;
+    public elements: { [key: string]: HTMLElement };
 
     constructor(vditor: IVditor, menuItem: IMenuItem) {
         super(vditor, menuItem);
+        this.elements = {};
 
         const panelElement = document.createElement("div");
         panelElement.className = "vditor-hint vditor-panel--arrow";
@@ -23,8 +25,16 @@ export class Headings extends MenuItem {
 <button data-tag="h6" data-value="###### ">${window.VditorI18n.heading6} &lt;${updateHotkeyTip("⌥⌘6")}></button>`;
 
         this.element.appendChild(panelElement);
+        for (let index = 0; index < panelElement.children.length; index++) {
+            const element = panelElement.children[index];
+            this.elements[`heading-${index+1}`] = element as HTMLElement;
+        }
 
         this._bindEvent(vditor, panelElement);
+    }
+
+    public getButtons() {
+        return this.elements;
     }
 
     public _bindEvent(vditor: IVditor, panelElement: HTMLElement) {

@@ -451,6 +451,63 @@ class Vditor extends VditorMethod {
         this.vditor.toolbar.element.style.display = "none"
     }
 
+    /** 增加不同种类的block **/
+    public addBlock(type: string) {
+        let element;
+        switch(type) {
+            case "heading-1":
+            case "heading-2":
+            case "heading-3":
+            case "heading-4":
+            case "heading-5":
+            case "heading-6":
+                element = this.vditor.toolbar.elements[type];
+                break;
+            case "table":
+            case "math-block":
+            case "ordered-list":
+            case "quote":
+                element = this.vditor.toolbar.elements[type].children[0] as HTMLElement;
+                break;
+            case "unordered-list":
+                element = this.vditor.toolbar.elements["list"].children[0] as HTMLElement;
+                break;
+            case "task-list":
+                element = this.vditor.toolbar.elements["check"].children[0] as HTMLElement;
+                break;
+            case "horizontal-line":
+                element = this.vditor.toolbar.elements["line"].children[0] as HTMLElement;
+                break;
+            case "code-block":
+                element = this.vditor.toolbar.elements["code"].children[0] as HTMLElement;
+                break;
+        }
+        console.log(element)
+        element.click()
+    }
+
+    public addFormat(type: string) {
+        let element;
+        switch(type) {
+            case "bold":
+            case "italic":
+            case "inline-code":
+            case "inline-math":
+            case "highlight":
+            case "link":
+            case "file-link":
+            case "img-link":
+            case "strike":
+                element = this.vditor.toolbar.elements[type].children[0] as HTMLElement;
+                break;
+            // todo
+            // case "underline":
+            // case "sup-script":
+            // case "sub-script":
+        }
+        element.click()
+    }
+
 
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
