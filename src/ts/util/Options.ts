@@ -114,6 +114,11 @@ export class Options {
                     "help",
                 ],
             },
+            "inline-math",
+            "math-block",
+            "highlight",
+            "sup-script",
+            "sub-script"
         ],
         toolbarConfig: {
             hide: false,
@@ -412,6 +417,46 @@ export class Options {
             {
                 name: "br",
             },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "inline-math",
+                prefix: "$",
+                suffix: "$",
+                tip: "inline-math",
+                tipPosition: "ne"
+            },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "math-block",
+                prefix: "$$",
+                suffix: "$$",
+                tip: "math-block",
+                tipPosition: "ne"
+            },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "highlight",
+                prefix: "==",
+                suffix: "==",
+                tip: "highlight",
+                tipPosition: "ne"
+            },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "sup-script",
+                prefix: "<sup>",
+                suffix: "</sup>",
+                tip: "sup-script",
+                tipPosition: "ne"
+            },
+            {
+                icon: '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>',
+                name: "sub-script",
+                prefix: "<sub>",
+                suffix: "</sub>",
+                tip: "sub-script",
+                tipPosition: "ne"
+            }
         ];
         const toolbarResult: IMenuItem[] = [];
         // toolbar是用户写在options中的toolbar列表，或者是默认的defaultOptions.toobar

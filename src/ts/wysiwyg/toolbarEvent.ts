@@ -7,6 +7,41 @@ import {getEditorRange, setRangeByWbr, setSelectionFocus} from "../util/selectio
 import {afterRenderEvent} from "./afterRenderEvent";
 import {genAPopover, highlightToolbarWYSIWYG} from "./highlightToolbarWYSIWYG";
 import {getNextHTML, getPreviousHTML, splitElement} from "./inlineTag";
+import {inputEvent} from "../../ts/sv/inputEvent";
+import {input} from "../../ts/wysiwyg/input";
+import {input as irInput} from "../../ts/ir/input";
+
+
+const insertValue = (vditor: IVditor, value: string, render = true) => {
+    const range = getEditorRange(vditor);
+    range.collapse(true);
+    const tmpElement = document.createElement("template");
+    tmpElement.innerHTML = value;
+    range.insertNode(tmpElement.content.cloneNode(true));
+    if (vditor.currentMode === "sv") {
+        vditor.sv.preventInput = true;
+        if (render) {
+            inputEvent(vditor);
+        }
+    } else if (vditor.currentMode === "wysiwyg") {
+        vditor.wysiwyg.preventInput = true;
+        if (render) {
+            input(vditor, getSelection().getRangeAt(0));
+        }
+    } else if (vditor.currentMode === "ir") {
+        vditor.ir.preventInput = true;
+        if (render) {
+            irInput(vditor, getSelection().getRangeAt(0), true);
+        }
+    }
+}
+
+const deleteValue = (vditor: IVditor) => {
+    if (window.getSelection().isCollapsed) {
+        return;
+    }
+    document.execCommand("delete", false);
+}
 
 const cancelBES = (range: Range, vditor: IVditor, commandName: string) => {
     let element = range.startContainer.parentElement;
@@ -29,7 +64,7 @@ const cancelBES = (range: Range, vditor: IVditor, commandName: string) => {
         if (tagName === "B") {
             tagName = "STRONG";
         }
-        if (tagName === "S" || tagName === "STRONG" || tagName === "EM") {
+        if (tagName === "S" || tagName === "STRONG" || tagName === "EM" || tagName === "MARK") {
             let insertHTML = "";
             let previousHTML = "";
             let nextHTML = "";
@@ -44,7 +79,8 @@ const cancelBES = (range: Range, vditor: IVditor, commandName: string) => {
             }
             if ((commandName === "bold" && tagName === "STRONG") ||
                 (commandName === "italic" && tagName === "EM") ||
-                (commandName === "strikeThrough" && tagName === "S")) {
+                (commandName === "strikeThrough" && tagName === "S") ||
+                (commandName === "highlight" && tagName === "MARK")) {
                 // 取消
                 insertHTML += `${lastTagName}${Constants.ZWSP}<wbr>${lastEndTagName}`;
                 jump = true;
@@ -136,6 +172,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             if (range.toString() === "") {
                 cancelBES(range, vditor, commandName);
             } else {
+                // todo
                 document.execCommand(commandName, false, "");
             }
         }
@@ -188,7 +225,22 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 setSelectionFocus(range);
             }
             actionBtn.classList.add("vditor-menu--current");
-        } else if (commandName === "code") {
+        }
+        else if (commandName === 'inline-math') {
+            if (range.toString() === "") {
+                insertValue(vditor, '$$', true);
+                if (range.startContainer.nodeValue !== "$$") {
+                    range.setStart(range.startContainer.nextSibling, 0)
+                }
+                range.setStart(range.startContainer, 1)
+            }
+            else if (range.startContainer.nodeType === 3) {
+                const text = range.toString();
+                deleteValue(vditor);
+                insertValue(vditor, '$' + text + '$', true);
+            }
+        }
+        else if (commandName === "code") {
             const node = document.createElement("div");
             node.className = "vditor-wysiwyg__block";
             node.setAttribute("data-type", "code-block");
@@ -210,7 +262,27 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                     processCodeRender(item, vditor);
                 });
             actionBtn.classList.add("vditor-menu--disabled");
-        } else if (commandName === "link") {
+        } 
+        else if (commandName === "math-block") {
+            const node = document.createElement("div");
+            node.className = "vditor-wysiwyg__block"
+            node.setAttribute("data-type", "math-block");
+            node.setAttribute("data-block", "0");
+            if (range.toString() === "") {
+                node.innerHTML = `<pre style="display: none"><code data-type="math-block"><wbr>
+                                </code></pre><pre class="vditor-wysiwyg__preview" data-render="2"><div data-type="math-block" class="language-math"></div></pre>`
+            } else if (range.startContainer.nodeType === 3) {
+                node.innerHTML = `<pre style="display: none"><code data-type="math-block">${range.toString()}<wbr>
+                </code></pre><pre class="vditor-wysiwyg__preview" data-render="2"><div data-type="math-block" class="language-math"></div></pre>`
+                range.deleteContents();
+            }
+            range.insertNode(node)
+            if (blockElement) {
+                blockElement.outerHTML = vditor.lute.SpinVditorDOM(blockElement.outerHTML);
+            }
+            setRangeByWbr(vditor.wysiwyg.element, range);
+        }
+        else if (commandName === "link") {
             if (range.toString() === "") {
                 const aElement = document.createElement("a");
                 aElement.innerText = Constants.ZWSP;
@@ -298,12 +370,15 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             if (commandName === "strike") {
                 commandName = "strikeThrough";
             }
-            if (range.toString() === "" && (commandName === "bold" || commandName === "italic" || commandName === "strikeThrough")) {
+            if (range.toString() === "" && (commandName === "bold" || commandName === "italic" || commandName === "strikeThrough"
+                                             || commandName === "highlight" )) {
                 let tagName = "strong";
                 if (commandName === "italic") {
                     tagName = "em";
                 } else if (commandName === "strikeThrough") {
                     tagName = "s";
+                } else if (commandName === "highlight") {
+                    tagName = "mark"
                 }
                 const node = document.createElement(tagName);
                 node.textContent = Constants.ZWSP;
@@ -317,6 +392,11 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
 
                 range.setStart(node.firstChild, 1);
                 range.collapse(true);
+                setSelectionFocus(range);
+            } else if (commandName === "highlight" && range.startContainer.nodeType === 3){
+                const node = document.createElement("mark");
+                range.surroundContents(node);
+                range.insertNode(node);
                 setSelectionFocus(range);
             } else {
                 document.execCommand(commandName, false, "");
