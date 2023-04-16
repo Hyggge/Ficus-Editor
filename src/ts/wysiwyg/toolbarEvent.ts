@@ -5,7 +5,7 @@ import {hasClosestBlock, hasClosestByMatchTag} from "../util/hasClosest";
 import {processCodeRender} from "../util/processCode";
 import {getEditorRange, setRangeByWbr, setSelectionFocus} from "../util/selection";
 import {afterRenderEvent} from "./afterRenderEvent";
-import {genAPopover, highlightToolbarWYSIWYG} from "./highlightToolbarWYSIWYG";
+import {genAPopover, highlightToolbarWYSIWYG, genImagePopover} from "./highlightToolbarWYSIWYG";
 import {getNextHTML, getPreviousHTML, splitElement} from "./inlineTag";
 import {inputEvent} from "../../ts/sv/inputEvent";
 import {input} from "../../ts/wysiwyg/input";
@@ -314,6 +314,33 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             }
             useHighlight = false;
             actionBtn.classList.add("vditor-menu--current");
+        } else if (commandName === "img-link") {
+            if (range.toString() === "") {
+                const imgElement = document.createElement("img");
+                imgElement.innerText = Constants.ZWSP;
+                range.insertNode(imgElement);
+                range.setStart(imgElement.firstChild, 1);
+                range.collapse(true);
+                genImagePopover(null, vditor, imgElement);
+                const textInputElement = vditor.wysiwyg.popover.querySelector("input");
+                textInputElement.value = "";
+                textInputElement.focus();
+                useRender = false;
+            } else {
+                const node = document.createElement("img");
+                node.setAttribute("href", "");
+                node.innerHTML = range.toString();
+                range.surroundContents(node);
+                range.insertNode(node);
+                setSelectionFocus(range);
+                genImagePopover(null, vditor, node);
+                const textInputElements = vditor.wysiwyg.popover.querySelectorAll("input");
+                textInputElements[0].value = node.innerText;
+                textInputElements[1].focus();
+            }
+            useHighlight = false;
+            actionBtn.classList.add("vditor-menu--current");
+
         } else if (commandName === "table") {
             let tableHTML = `<table data-block="0"><thead><tr><th>col1<wbr></th><th>col2</th><th>col3</th></tr></thead><tbody><tr><td> </td><td> </td><td> </td></tr><tr><td> </td><td> </td><td> </td></tr></tbody></table>`;
             if (range.toString().trim() === "") {

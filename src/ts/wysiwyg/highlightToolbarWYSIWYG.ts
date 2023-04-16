@@ -1048,8 +1048,15 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
     setPopoverPosition(vditor, aElement);
 };
 
-export const genImagePopover = (event: Event, vditor: IVditor) => {
-    const imgElement = event.target as HTMLImageElement;
+export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement) => {
+    let imgElement : HTMLImageElement;
+    if (img) {
+        imgElement = img as HTMLImageElement;
+    } else {
+        imgElement = event.target as HTMLImageElement;
+    }
+    
+
     vditor.wysiwyg.popover.innerHTML = "";
     const updateImg = () => {
         imgElement.setAttribute("src", inputElement.value);
