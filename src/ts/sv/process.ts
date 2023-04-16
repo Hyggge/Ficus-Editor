@@ -181,15 +181,17 @@ export const processToolbar = (vditor: IVditor, actionBtn: Element, prefix: stri
         document.execCommand("insertHTML", false, html);
         return;
     } else if (commandName === "italic" || commandName === "bold" || commandName === "strike" ||
-        commandName === "inline-code" || commandName === "code" || commandName === "table" || commandName === "line") {
+        commandName === "inline-code" || commandName === "code" || commandName === "table" || commandName === "line" || 
+        commandName === "inline-math" || commandName === "math-block" || commandName === "highlight") {
         let html;
         // https://github.com/Vanessa219/vditor/issues/563 代码块不需要后面的 ```
         if (range.toString() === "") {
             html = `${prefix}${Lute.Caret}${commandName === "code" ? "" : suffix}`;
         } else {
-            html = `${prefix}${range.toString()}${Lute.Caret}${commandName === "code" ? "" : suffix}`;
+            html = `${prefix}${range.toString()}${Lute.Caret}${(commandName === "code" || commandName === "math-block") ? "" : suffix}`;
         }
-        if (commandName === "table" || (commandName === "code" && spanElement && spanElement.textContent !== "")) {
+        if (commandName === "table" || (commandName === "code" && spanElement && spanElement.textContent !== "") ||
+                    (commandName === "math-block" && spanElement && spanElement.textContent !== "")) {
             html = "\n\n" + html;
         } else if (commandName === "line") {
             html = `\n\n${prefix}\n${Lute.Caret}`;
