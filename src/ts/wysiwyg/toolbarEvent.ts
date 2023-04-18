@@ -125,8 +125,46 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
 
     let commandName = actionBtn.getAttribute("data-type");
 
+    // 如果是高亮
+    if (commandName === "highlight") {
+        // bold, italic, strike, highlight
+        console.log('enter')
+        useHighlight = false;
+        actionBtn.classList.add("vditor-menu--current");
+
+        if (range.toString() === "") {
+            const node = document.createElement("mark");
+            node.textContent = Constants.ZWSP;
+            range.insertNode(node);
+            if (node.previousSibling && node.previousSibling.textContent === Constants.ZWSP) {
+                // 移除多层嵌套中的 zwsp
+                node.previousSibling.textContent = "";
+            }
+            range.setStart(node.firstChild, 1);
+            range.collapse(true);
+            setSelectionFocus(range);
+            console.log(1)
+        } else {
+            document.execCommand('BackColor', false, 'yellow')
+            // 将选中的文字用 mark 包裹
+            const yellowSpans = document.querySelectorAll('span[style="background-color: yellow;"]');
+            yellowSpans.forEach((span) => {
+                const mark = document.createElement('mark');
+                mark.textContent = span.textContent;
+                span.parentNode.replaceChild(mark, span);
+            });
+            // 将相邻的两个mark合并
+            const marks = document.querySelectorAll('mark');
+            for (let i = 0; i < marks.length - 1; i++) {
+                if (marks[i].nextSibling === marks[i + 1]) {
+                    marks[i].textContent += marks[i + 1].textContent;
+                    marks[i + 1].remove();
+                }
+            }
+        }
+    }
     // 移除
-    if (actionBtn.classList.contains("vditor-menu--current")) {
+    else if (actionBtn.classList.contains("vditor-menu--current")) {
         if (commandName === "strike") {
             commandName = "strikeThrough";
         }
@@ -403,15 +441,12 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             if (commandName === "strike") {
                 commandName = "strikeThrough";
             }
-            if (range.toString() === "" && (commandName === "bold" || commandName === "italic" || commandName === "strikeThrough"
-                                             || commandName === "highlight" )) {
+            if (range.toString() === "" && (commandName === "bold" || commandName === "italic" || commandName === "strikeThrough")) {
                 let tagName = "strong";
                 if (commandName === "italic") {
                     tagName = "em";
                 } else if (commandName === "strikeThrough") {
                     tagName = "s";
-                } else if (commandName === "highlight") {
-                    tagName = "mark"
                 }
                 const node = document.createElement(tagName);
                 node.textContent = Constants.ZWSP;
@@ -425,11 +460,6 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
 
                 range.setStart(node.firstChild, 1);
                 range.collapse(true);
-                setSelectionFocus(range);
-            } else if (commandName === "highlight" && range.startContainer.nodeType === 3){
-                const node = document.createElement("mark");
-                range.surroundContents(node);
-                range.insertNode(node);
                 setSelectionFocus(range);
             } else {
                 document.execCommand(commandName, false, "");
