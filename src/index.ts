@@ -503,6 +503,39 @@ class Vditor extends VditorMethod {
         element.click()
     }
 
+    /** 导出HTML **/
+    public exportWholeHTML() {
+            const content = getHTML(this.vditor);
+            const theme = this.vditor.options.preview.theme.current;
+            const html = `<html><head><link rel="stylesheet" type="text/css" href="${this.vditor.options.cdn}/dist/index.css"/>
+        <link rel="stylesheet" type="text/css" href="${this.vditor.options.cdn}/dist/css/content-theme/${theme}.css"/>
+        <script src="${this.vditor.options.cdn}/dist/js/i18n/${this.vditor.options.lang}.js"></script>
+        <script src="${this.vditor.options.cdn}/dist/method.min.js"></script></head>
+        <body><div class="vditor-reset" id="preview">${content}</div>
+        <script>
+            const previewElement = document.getElementById('preview')
+            Vditor.codeRender(previewElement);
+            Vditor.highlightRender(${JSON.stringify(this.vditor.options.preview.hljs)}, previewElement, '${this.vditor.options.cdn}');
+            Vditor.mathRender(previewElement, {
+                cdn: '${this.vditor.options.cdn}',
+                math: ${JSON.stringify(this.vditor.options.preview.math)},
+            });
+            Vditor.mermaidRender(previewElement, '${this.vditor.options.cdn}', '${this.vditor.options.theme}');
+            Vditor.markmapRender(previewElement, '${this.vditor.options.cdn}', '${this.vditor.options.theme}');
+            Vditor.flowchartRender(previewElement, '${this.vditor.options.cdn}');
+            Vditor.graphvizRender(previewElement, '${this.vditor.options.cdn}');
+            Vditor.chartRender(previewElement, '${this.vditor.options.cdn}', '${this.vditor.options.theme}');
+            Vditor.mindmapRender(previewElement, '${this.vditor.options.cdn}', '${this.vditor.options.theme}');
+            Vditor.abcRender(previewElement, '${this.vditor.options.cdn}');
+            Vditor.mediaRender(previewElement);
+            Vditor.speechRender(previewElement);
+        </script>
+        <script src="${this.vditor.options.cdn}/dist/js/icons/${this.vditor.options.icon}.js"></script></body></html>`;
+
+        return html;
+    }
+
+
 
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
