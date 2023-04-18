@@ -93,9 +93,6 @@ export class Toolbar {
             case "inline-math":
             case "math-block":
             case "highlight":
-            case "sup-script":
-            case "sub-script":
-            case "underline":
                 menuItemObj = new MenuItem(vditor, menuItem);
                 break;
             case "emoji":
