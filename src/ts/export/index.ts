@@ -61,7 +61,7 @@ export const exportHTML = (vditor: IVditor, autoDownload: boolean = true) => {
     const html = `<html><head><link rel="stylesheet" type="text/css" href="${vditor.options.cdn}/dist/index.css"/>
 <script src="${vditor.options.cdn}/dist/js/i18n/${vditor.options.lang}.js"></script>
 <script src="${vditor.options.cdn}/dist/method.min.js"></script></head>
-<body><div class="vditor-reset" id="preview">${content}</div>
+<body><div class="vditor-reset" id="preview" style="padding: 0px 30px 0px">${content}</div>
 <script>
     const previewElement = document.getElementById('preview')
     Vditor.setContentTheme('${vditor.options.preview.theme.current}', '${vditor.options.preview.theme.path}');
