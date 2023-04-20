@@ -505,13 +505,13 @@ class Vditor extends VditorMethod {
     }
 
     /** 导出HTML **/
-    public exportHTML() {
-        exportHTML(this.vditor)
+    public exportHTML(autoDownload: boolean = true) {
+        return exportHTML(this.vditor, autoDownload)
     }
 
     /** 导出PDF **/
-    public exportPDF() {
-        exportPDF(this.vditor)
+    public exportPDF(autoDownload: boolean = true) {
+        return exportPDF(this.vditor, autoDownload)
     }
 
 

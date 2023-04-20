@@ -21,7 +21,7 @@ export const exportMarkdown = (vditor: IVditor) => {
     download(vditor, content, content.substr(0, 10) + ".md");
 };
 
-export const exportPDF = (vditor: IVditor) => {
+export const exportPDF = (vditor: IVditor, autoDownload: boolean = true) => {
     vditor.tip.show(window.VditorI18n.generate, 3800);
     const iframe = document.querySelector("#vditorExportIframe") as HTMLIFrameElement;
     iframe.contentDocument.open();
@@ -48,12 +48,15 @@ window.addEventListener("message", (e) => {
 }, false);
 </script>`);
     iframe.contentDocument.close();
-    setTimeout(() => {
-        iframe.contentWindow.postMessage(getMarkdown(vditor), "*");
-    }, 200);
+    if (autoDownload) {
+        setTimeout(() => {
+            iframe.contentWindow.postMessage(getMarkdown(vditor), "*");
+        }, 200);
+    }
+    return iframe.contentDocument;
 };
 
-export const exportHTML = (vditor: IVditor) => {
+export const exportHTML = (vditor: IVditor, autoDownload: boolean = true) => {
     const content = getHTML(vditor);
     const html = `<html><head><link rel="stylesheet" type="text/css" href="${vditor.options.cdn}/dist/index.css"/>
 <script src="${vditor.options.cdn}/dist/js/i18n/${vditor.options.lang}.js"></script>
@@ -79,5 +82,6 @@ export const exportHTML = (vditor: IVditor) => {
     Vditor.speechRender(previewElement);
 </script>
 <script src="${vditor.options.cdn}/dist/js/icons/${vditor.options.icon}.js"></script></body></html>`;
-    download(vditor, html, "demo.html");
+    if(autoDownload) download(vditor, html, "demo.html");
+    return html;
 };
