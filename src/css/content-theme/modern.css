@@ -198,3 +198,7 @@ pre.vditor-sv:focus {
   background-color: var(--SwissCoffee-500);
   padding: 1px, 1px;
 }
+
+.vditor-wysiwyg div.vditor-wysiwyg__block[data-type="math-block"]:before {
+  content: "";
+}
