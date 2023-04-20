@@ -184,3 +184,8 @@ pre.vditor-sv:focus {
   font-size: 12px;
   line-height: 18px;
 }
+
+/** 内联公式, 公式块样式 **/
+span.katex-html {
+  font-size: 14px;
+}
