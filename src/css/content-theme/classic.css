@@ -183,9 +183,16 @@ pre.vditor-sv:focus {
   font-weight: 400; /* Regular */
   font-size: 12px;
   line-height: 18px;
+  padding: 0px 3px;
 }
 
 /** 内联公式, 公式块样式 **/
-span.katex-html {
+.vditor-reset span.katex-html {
   font-size: 14px;
+}
+
+/** 内联公式编辑区 **/
+.vditor-reset code[data-type="math-inline"] {
+  background-color: var(--SwissCoffee-500);
+  padding: 1px, 1px;
 }
