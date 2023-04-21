@@ -68,8 +68,6 @@ pre.vditor-sv:focus {
   line-height: 32px;
   color: var(--TextMedium);
   text-align: justify;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid var(--TextLight);
   padding-bottom: 4px;
 }
@@ -80,8 +78,6 @@ pre.vditor-sv:focus {
   line-height: 28px;
   color: var(--TextMedium);
   text-align: justify;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid var(--TextLight);
   padding-bottom: 4px;
 }
@@ -92,8 +88,6 @@ pre.vditor-sv:focus {
   line-height: 24px;
   color: var(--TextMedium);
   text-align: justify;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid var(--TextLight);
   padding-bottom: 4px;
 }
@@ -104,8 +98,6 @@ pre.vditor-sv:focus {
   line-height: 22px;
   color: var(--TextMedium);
   text-align: justify;
-  display: flex;
-  align-items: center;
 }
 
 .vditor-reset h5 {
@@ -114,8 +106,6 @@ pre.vditor-sv:focus {
   line-height: 20px;
   color: var(--TextMedium);
   text-align: justify;
-  display: flex;
-  align-items: center;
 }
 
 .vditor-reset h6 {
@@ -124,8 +114,6 @@ pre.vditor-sv:focus {
   line-height: 18px;
   color: var(--TextRegular);
   text-align: justify;
-  display: flex;
-  align-items: center;
 }
 
 .vditor-reset h1,
