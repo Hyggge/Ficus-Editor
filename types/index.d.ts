@@ -604,6 +604,8 @@ interface IResize {
 
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
+    /** 是否启用撤销功能 **/
+    undoEnable?: boolean;
     /** RTL */
     rtl?: boolean;
     /** 历史记录间隔 */
