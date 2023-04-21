@@ -27,7 +27,7 @@ import {setTheme} from "./ts/ui/setTheme";
 import {Undo} from "./ts/undo/index";
 import {Upload} from "./ts/upload/index";
 import {addScript, addScriptSync} from "./ts/util/addScript";
-import {getSelectText} from "./ts/util/getSelectText";
+import {getSelectText, getSelectMD, getSelectHTML} from "./ts/util/getSelectText";
 import {Options} from "./ts/util/Options";
 import {processCodeRender} from "./ts/util/processCode";
 import {getCursorPosition, getEditorRange} from "./ts/util/selection";
@@ -166,10 +166,17 @@ class Vditor extends VditorMethod {
         this.vditor[this.vditor.currentMode].element.setAttribute("contenteditable", "true");
     }
 
-    /** 返回选中的字符串 */
-    public getSelection() {
+    /** 返回选中的内容，
+     * 默认情况下返回纯文本
+     * 之后wysiwyg模式才可以返回md或者html */
+    public getSelection(type: string = 'text') {
         if (this.vditor.currentMode === "wysiwyg") {
-            return getSelectText(this.vditor.wysiwyg.element);
+            switch(type) {
+                case 'text': return getSelectText(this.vditor.wysiwyg.element);
+                case 'md':   return getSelectMD(this.vditor);
+                case 'html': return getSelectHTML(this.vditor);
+                default: console.log('type error');
+            }
         } else if (this.vditor.currentMode === "sv") {
             return getSelectText(this.vditor.sv.element);
         } else if (this.vditor.currentMode === "ir") {

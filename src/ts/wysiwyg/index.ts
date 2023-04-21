@@ -29,6 +29,7 @@ import {getRenderElementNextNode, modifyPre} from "./inlineTag";
 import {input} from "./input";
 import {showCode} from "./showCode";
 import {getMarkdown} from "../markdown/getMarkdown";
+import { getSelectMD } from "../util/getSelectText";
 
 class WYSIWYG {
     public range: Range;
@@ -202,6 +203,7 @@ class WYSIWYG {
     }
 
     private copy(event: ClipboardEvent, vditor: IVditor) {
+        // 默认复制md字符串
         const range = getSelection().getRangeAt(0);
         if (range.toString() === "") {
             return;
@@ -209,37 +211,9 @@ class WYSIWYG {
         event.stopPropagation();
         event.preventDefault();
 
-        const codeElement = hasClosestByMatchTag(range.startContainer, "CODE");
-        const codeEndElement = hasClosestByMatchTag(range.endContainer, "CODE");
-        if (codeElement && codeEndElement && codeEndElement.isSameNode(codeElement)) {
-            let codeText = "";
-            if (codeElement.parentElement.tagName === "PRE") {
-                codeText = range.toString();
-            } else {
-                codeText = "`" + range.toString() + "`";
-            }
-            event.clipboardData.setData("text/plain", codeText);
-            event.clipboardData.setData("text/html", "");
-            return;
-        }
+        const md = getSelectMD(vditor);
 
-        const aElement = hasClosestByMatchTag(range.startContainer, "A");
-        const aEndElement = hasClosestByMatchTag(range.endContainer, "A");
-        if (aElement && aEndElement && aEndElement.isSameNode(aElement)) {
-            let aTitle = aElement.getAttribute("title") || "";
-            if (aTitle) {
-                aTitle = ` "${aTitle}"`;
-            }
-            event.clipboardData.setData("text/plain",
-                `[${range.toString()}](${aElement.getAttribute("href")}${aTitle})`);
-            event.clipboardData.setData("text/html", "");
-            return;
-        }
-
-        const tempElement = document.createElement("div");
-        tempElement.appendChild(range.cloneContents());
-
-        event.clipboardData.setData("text/plain", vditor.lute.VditorDOM2Md(tempElement.innerHTML).trim());
+        event.clipboardData.setData("text/plain", md);
         event.clipboardData.setData("text/html", "");
     }
 
