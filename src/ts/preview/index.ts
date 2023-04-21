@@ -275,6 +275,6 @@ export class Preview {
         setSelectionFocus(range);
         document.execCommand("copy");
         this.element.lastElementChild.remove();
-        vditor.tip.show(`已复制，可到${type === "zhihu" ? "知乎" : "微信公众号平台"}进行粘贴`);
+        vditor.tip.show(`已复制`);
     }
 }
