@@ -193,6 +193,11 @@ pre.vditor-sv:focus {
   padding: 1px, 1px;
 }
 
+/** 删除公式块、代码块前缀 **/
 .vditor-wysiwyg div.vditor-wysiwyg__block[data-type="math-block"]:before {
+  content: "";
+}
+
+.vditor-wysiwyg div.vditor-wysiwyg__block[data-type="code-block"]:before {
   content: "";
 }
