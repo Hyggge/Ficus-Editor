@@ -30,7 +30,7 @@ import {addScript, addScriptSync} from "./ts/util/addScript";
 import {getSelectText, getSelectMD, getSelectHTML} from "./ts/util/getSelectText";
 import {Options} from "./ts/util/Options";
 import {processCodeRender} from "./ts/util/processCode";
-import {getCursorPosition, getEditorRange} from "./ts/util/selection";
+import {getCursorPosition, getEditorRange, selectIsEditor} from "./ts/util/selection";
 import {afterRenderEvent} from "./ts/wysiwyg/afterRenderEvent";
 import {WYSIWYG} from "./ts/wysiwyg/index";
 import {input} from "./ts/wysiwyg/input";
@@ -572,6 +572,38 @@ class Vditor extends VditorMethod {
         }
     }
 
+    /** 清除样式 **/
+    public removeFormat() {
+        if (window.getSelection().isCollapsed) {
+            return;
+        }
+
+        if (this.vditor.currentMode === "wysiwyg") {
+            if (! selectIsEditor(this.vditor.wysiwyg.element)) {
+                return;
+            }
+            document.execCommand("removeFormat");
+        }
+        else if (this.vditor.currentMode === "sv") {
+            if (! selectIsEditor(this.vditor.sv.element)) {
+                return;
+            }
+            // 获得选中的md
+            const md = getSelectText(this.vditor.sv.element)
+            // 将选中的文本转换为HTML
+            const html = this.vditor.lute.Md2HTML(md)
+            // 将HTML转换为纯文本
+            const div = document.createElement('div')
+            div.innerHTML = html
+            const newMd = div.textContent.trim()
+            // 删除选中的内容，插入新的纯文本
+            this.deleteValue()
+            const range = getSelection().getRangeAt(0)
+            range.insertNode(document.createTextNode(newMd))
+            // 左侧栏渲染之后，右侧重新渲染
+            processSVAfterRender(this.vditor);
+        }
+    }
 
 
     private init(id: HTMLElement, mergedOptions: IOptions) {
