@@ -47,6 +47,7 @@ class Editor {
 
     private bindEvent(vditor: IVditor) {
         this.element.addEventListener("paste", (event: ClipboardEvent & { target: HTMLElement }) => {
+            scrollCenter(vditor)
             paste(vditor, event, {
                 pasteCode: (code: string) => {
                     document.execCommand("insertHTML", false, code);
@@ -82,7 +83,12 @@ class Editor {
             this.composingLock = false;
         });
 
+        this.element.addEventListener("click", (event: MouseEvent) => {
+            scrollCenter(vditor)
+        })
+
         this.element.addEventListener("input", (event: InputEvent) => {
+            scrollCenter(vditor)
             if (event.inputType === "deleteByDrag" || event.inputType === "insertFromDrop") {
                 // https://github.com/Vanessa219/vditor/issues/801 编辑器内容拖拽问题
                 return;

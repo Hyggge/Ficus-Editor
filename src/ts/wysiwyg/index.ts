@@ -268,6 +268,7 @@ class WYSIWYG {
         });
 
         this.element.addEventListener("paste", (event: ClipboardEvent & { target: HTMLElement }) => {
+            scrollCenter(vditor);
             paste(vditor, event, {
                 pasteCode: (code: string) => {
                     const range = getEditorRange(vditor);
@@ -304,6 +305,7 @@ class WYSIWYG {
         });
 
         this.element.addEventListener("input", (event: InputEvent) => {
+            scrollCenter(vditor);
             if (event.inputType === "deleteByDrag" || event.inputType === "insertFromDrop") {
                 // https://github.com/Vanessa219/vditor/issues/801 编辑器内容拖拽问题
                 return;
@@ -374,6 +376,7 @@ class WYSIWYG {
         });
 
         this.element.addEventListener("click", (event: MouseEvent & { target: HTMLElement }) => {
+            scrollCenter(vditor);
             if (event.target.tagName === "INPUT") {
                 const checkElement = event.target as HTMLInputElement;
                 if (checkElement.checked) {
