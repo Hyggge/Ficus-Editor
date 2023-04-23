@@ -24,7 +24,7 @@ import {
 } from "../util/selection";
 import {clickToc, renderToc} from "../util/toc";
 import {afterRenderEvent} from "./afterRenderEvent";
-import {genImagePopover, genLinkRefPopover, highlightToolbarWYSIWYG} from "./highlightToolbarWYSIWYG";
+import {genAPopover, genImagePopover, genLinkRefPopover, highlightToolbarWYSIWYG} from "./highlightToolbarWYSIWYG";
 import {getRenderElementNextNode, modifyPre} from "./inlineTag";
 import {input} from "./input";
 import {showCode} from "./showCode";
@@ -402,6 +402,10 @@ class WYSIWYG {
 
             // 打开链接
             if (event.target.tagName === "A") {
+                if (event.ctrlKey === false) {
+                    genAPopover(vditor, event.target, getSelection().getRangeAt(0))
+                    return;
+                }
                 if (vditor.options.link.click) {
                     vditor.options.link.click(event.target);
                 } else if (vditor.options.link.isOpen) {

@@ -778,6 +778,14 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         if (backslashElement) {
             backslashElement.querySelector("span").style.display = "inline";
         }
+
+        // img popover (why here?)
+        const imgElement = hasClosestByMatchTag(typeElement, "IMG") as HTMLElement;
+        if (imgElement) {
+            setCurrentToolbar(vditor.toolbar.elements, ["img-link"]);
+            genImagePopover(null, vditor, imgElement);
+        }
+
     }, 200);
 };
 
