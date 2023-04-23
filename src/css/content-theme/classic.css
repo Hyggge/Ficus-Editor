@@ -202,3 +202,15 @@ pre.vditor-sv:focus {
 .vditor-wysiwyg div.vditor-wysiwyg__block[data-type="code-block"]:before {
   content: "";
 }
+
+/** 表格 **/
+.vditor-reset table th,
+.vditor-reset table td {
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.vditor-reset table th:first-child:after,
+.vditor-reset table td:first-child:after {
+  display: none;
+}
