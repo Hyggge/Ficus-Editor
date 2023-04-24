@@ -214,3 +214,8 @@ pre.vditor-sv:focus {
 .vditor-reset table td:first-child:after {
   display: none;
 }
+
+/** 有序列表 **/
+.vditor-reset ol {
+  list-style-type: decimal;
+}
