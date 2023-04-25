@@ -610,6 +610,11 @@ class Vditor extends VditorMethod {
         this.vditor.options.typewriterMode = enable;
     }
 
+    /** 获得当前焦点位置 **/
+    public getEditorRange() {
+        return getEditorRange(this.vditor);
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
