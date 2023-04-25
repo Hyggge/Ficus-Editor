@@ -615,29 +615,34 @@ class Vditor extends VditorMethod {
         return getEditorRange(this.vditor);
     }
 
-    /** 根据当前模式设置焦点 **/
+    /** 根据当前模式设置焦点, 并进行跳转
+     *  如果不传range, 或者传的range属于当前模式的界面中，则需要跳转到开头 **/
     public setEditorRange(range?: Range) {
         const element = this.vditor[this.vditor.currentMode].element;
         if (this.vditor.currentMode === 'wysiwyg') {
             if (range && selectIsEditor(this.vditor.wysiwyg.element, range)) {
                 setSelectionFocus(range);
+                this.vditor.wysiwyg.element.scrollTop = (range.startContainer as HTMLElement).offsetTop + this.vditor.wysiwyg.element.clientHeight;
             } else {
                 element.focus();
                 let newRange = element.ownerDocument.createRange();
                 newRange.setStart(element, 0);
                 newRange.collapse(true);
                 setSelectionFocus(newRange);
+                this.vditor.wysiwyg.element.scrollTop = 0;
             }
         }
         else if (this.vditor.currentMode === 'sv') {
             if (range && selectIsEditor(this.vditor.sv.element, range)) {
                 setSelectionFocus(range);
+                this.vditor.sv.element.scrollTop = (range.startContainer as HTMLElement).offsetTop + this.vditor.sv.element.clientHeight;
             } else {
                 element.focus();
                 let newRange = element.ownerDocument.createRange();
                 newRange.setStart(element, 0);
                 newRange.collapse(true);
                 setSelectionFocus(newRange);
+                this.vditor.sv.element.scrollTop = 0;
             }
         }
     }
