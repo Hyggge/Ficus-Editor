@@ -3,6 +3,9 @@ import {setSelectionFocus} from "../util/selection";
 
 export const showCode = (previewElement: HTMLElement, vditor: IVditor, first = true) => {
     const previousElement = previewElement.previousElementSibling as HTMLElement;
+    if (!previousElement) {
+        return;
+    }
     const range = previousElement.ownerDocument.createRange();
     if (previousElement.tagName === "CODE") {
         previousElement.style.display = "inline-block";
