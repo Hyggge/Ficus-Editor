@@ -1195,8 +1195,15 @@ export const fixTask = (vditor: IVditor, range: Range, event: KeyboardEvent) => 
 export const fixDelete = (vditor: IVditor, range: Range, event: KeyboardEvent, pElement: HTMLElement | false) => {
     if (range.startContainer.nodeType !== 3) {
         // 光标位于 hr 前，hr 前有内容
-        const rangeElement = (range.startContainer as HTMLElement).children[range.startOffset];
-        if (rangeElement && rangeElement.tagName === "HR") {
+        const startContainer = range.startContainer as HTMLElement;
+        const rangeElement = startContainer.children[range.startOffset];
+        if (startContainer.tagName === "HR") {
+            range.selectNodeContents(startContainer.previousElementSibling);
+            range.collapse(false);
+            event.preventDefault();
+            return true;
+        }
+        else if (rangeElement && rangeElement.tagName === "HR") {
             range.selectNodeContents(rangeElement.previousElementSibling);
             range.collapse(false);
             event.preventDefault();

@@ -494,7 +494,7 @@ class WYSIWYG {
                     previewElement = blockRenderElement.lastElementChild as HTMLElement;
                 }
             }
-            if (!previewElement) {
+            if (!previewElement || previewElement.previousElementSibling === null) {
                 return;
             }
             const previousElement = previewElement.previousElementSibling as HTMLElement;
