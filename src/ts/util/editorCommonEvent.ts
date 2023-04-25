@@ -120,6 +120,14 @@ export const hotkeyEvent = (vditor: IVditor, editorElement: HTMLElement) => {
             return;
         }
 
+        // 优先绑定Ficus的快捷键
+        vditor.options.ficusHotkey.forEach((item: FicusHotkey) => {
+            if (matchHotKey(item.hotkey, event)) {
+                item.action()
+                event.preventDefault();
+            }
+        });
+
         // 重置 comment
         if (vditor.options.comment.enable && vditor.currentMode === "wysiwyg" &&
             (event.key === "Backspace" || matchHotKey("⌘X", event))) {
@@ -146,18 +154,21 @@ export const hotkeyEvent = (vditor: IVditor, editorElement: HTMLElement) => {
             return;
         }
 
-        // undo
-        if (matchHotKey("⌘Z", event) && !vditor.toolbar.elements.undo) {
-            vditor.undo.undo(vditor);
-            event.preventDefault();
-            return;
-        }
+        // 只有当undoEnable为true时才会默认绑定undo和redo快捷键
+        if (vditor.options.undoEnable) {
+            // undo
+            if (matchHotKey("⌘Z", event) && !vditor.toolbar.elements.undo) {
+                vditor.undo.undo(vditor);
+                event.preventDefault();
+                return;
+            }
 
-        // redo
-        if (matchHotKey("⌘Y", event) && !vditor.toolbar.elements.redo) {
-            vditor.undo.redo(vditor);
-            event.preventDefault();
-            return;
+            // redo
+            if (matchHotKey("⌘Y", event) && !vditor.toolbar.elements.redo) {
+                vditor.undo.redo(vditor);
+                event.preventDefault();
+                return;
+            }
         }
 
         // esc
