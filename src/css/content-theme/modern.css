@@ -38,17 +38,14 @@ pre.vditor-sv:focus {
   background: var(--White);
 }
 
-.vditor-reset pre.vditor-wysiwyg__pre>code {
-  background: var(--TextLight);
-}
 
 /* 段落 */
 
 .vditor-reset p {
   font-weight: 400;
   /* Regular */
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 30px;
   color: var(--TextMedium);
   text-align: justify;
   vertical-align: center;
@@ -60,12 +57,17 @@ pre.vditor-sv:focus {
   font-weight: 900;
 }
 
+.vditor-reset pre.vditor-wysiwyg__pre>code {
+  background: var(--TextLight);
+}
+
+
 /* 标题 */
 
 .vditor-reset h1 {
   font-weight: 900;
-  font-size: 28px;
-  line-height: 32px;
+  font-size: 40px;
+  line-height: 52px;
   color: var(--TextMedium);
   text-align: justify;
   border-bottom: 1px solid var(--TextLight);
@@ -74,8 +76,8 @@ pre.vditor-sv:focus {
 
 .vditor-reset h2 {
   font-weight: 900;
-  font-size: 24px;
-  line-height: 28px;
+  font-size: 32px;
+  line-height: 44px;
   color: var(--TextMedium);
   text-align: justify;
   border-bottom: 1px solid var(--TextLight);
@@ -84,8 +86,8 @@ pre.vditor-sv:focus {
 
 .vditor-reset h3 {
   font-weight: 900;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 24px;
+  line-height: 36px;
   color: var(--TextMedium);
   text-align: justify;
   border-bottom: 1px solid var(--TextLight);
@@ -94,24 +96,24 @@ pre.vditor-sv:focus {
 
 .vditor-reset h4 {
   font-weight: 900;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 20px;
+  line-height: 32px;
   color: var(--TextMedium);
   text-align: justify;
 }
 
 .vditor-reset h5 {
   font-weight: 900;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 18px;
+  line-height: 30px;
   color: var(--TextMedium);
   text-align: justify;
 }
 
 .vditor-reset h6 {
   font-weight: 900;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 32px;
   color: var(--TextRegular);
   text-align: justify;
 }
@@ -122,14 +124,14 @@ pre.vditor-sv:focus {
 .vditor-reset h4,
 .vditor-reset h5,
 .vditor-reset h6 {
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 
 /* 分割线 */
 
 .vditor-reset hr {
-  border-bottom: 1px solid var(--TextLight);
+  border-bottom: 2px solid var(--TextLight);
   transform-origin: 0 0;
   transform: scale(1, 0.5);
   height: 0;
@@ -140,8 +142,8 @@ pre.vditor-sv:focus {
 .vditor-reset blockquote p {
   font-weight: 200;
   /* ExtraLight */
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 30px;
   color: var(--TextQuote);
   text-align: justify;
   vertical-align: center;
@@ -166,8 +168,8 @@ pre.vditor-sv:focus {
 .vditor-reset ul>li {
   font-weight: 400;
   /* Regular */
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 30px;
   color: var(--TextMedium);
   text-align: justify;
   vertical-align: center;
@@ -179,15 +181,16 @@ pre.vditor-sv:focus {
 
 /** 内联代码块样式 **/
 .vditor-reset code:not(.hljs):not(.highlight-chroma) {
-  font-weight: 400; /* Regular */
-  font-size: 12px;
-  line-height: 18px;
+  font-weight: 400;
+  /* Regular */
+  font-size: 16px;
+  line-height: 24px;
   padding: 0px 3px;
 }
 
 /** 内联公式, 公式块样式 **/
 .vditor-reset span.katex-html {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /** 内联公式编辑区 **/
@@ -208,7 +211,7 @@ pre.vditor-sv:focus {
 /** 表格 **/
 .vditor-reset table th,
 .vditor-reset table td {
-  font-size: 12px;
+  font-size: 16px;
   vertical-align: middle;
 }
 
