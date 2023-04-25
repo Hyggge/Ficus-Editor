@@ -30,7 +30,7 @@ import {addScript, addScriptSync} from "./ts/util/addScript";
 import {getSelectText, getSelectMD, getSelectHTML} from "./ts/util/getSelectText";
 import {Options} from "./ts/util/Options";
 import {processCodeRender} from "./ts/util/processCode";
-import {getCursorPosition, getEditorRange, selectIsEditor} from "./ts/util/selection";
+import {getCursorPosition, getEditorRange, selectIsEditor, setSelectionFocus} from "./ts/util/selection";
 import {afterRenderEvent} from "./ts/wysiwyg/afterRenderEvent";
 import {WYSIWYG} from "./ts/wysiwyg/index";
 import {input} from "./ts/wysiwyg/input";
@@ -613,6 +613,33 @@ class Vditor extends VditorMethod {
     /** 获得当前焦点位置 **/
     public getEditorRange() {
         return getEditorRange(this.vditor);
+    }
+
+    /** 根据当前模式设置焦点 **/
+    public setEditorRange(range?: Range) {
+        const element = this.vditor[this.vditor.currentMode].element;
+        if (this.vditor.currentMode === 'wysiwyg') {
+            if (range && selectIsEditor(this.vditor.wysiwyg.element, range)) {
+                setSelectionFocus(range);
+            } else {
+                element.focus();
+                let newRange = element.ownerDocument.createRange();
+                newRange.setStart(element, 0);
+                newRange.collapse(true);
+                setSelectionFocus(newRange);
+            }
+        }
+        else if (this.vditor.currentMode === 'sv') {
+            if (range && selectIsEditor(this.vditor.sv.element, range)) {
+                setSelectionFocus(range);
+            } else {
+                element.focus();
+                let newRange = element.ownerDocument.createRange();
+                newRange.setStart(element, 0);
+                newRange.collapse(true);
+                setSelectionFocus(newRange);
+            }
+        }
     }
 
     private init(id: HTMLElement, mergedOptions: IOptions) {
