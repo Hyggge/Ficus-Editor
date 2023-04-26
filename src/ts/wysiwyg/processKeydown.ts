@@ -161,6 +161,21 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
             return true;
         }
 
+        if (range.startOffset === 0 && !isCtrl(event) && !event.shiftKey && !event.altKey && 
+            event.key === "Enter") {
+            // H1-H6 开头处回车解析问题
+            console.log('hhhhhhh')
+            const pTempElement = document.createElement("p");
+            // pTempElement.textContent = "\n";
+            pTempElement.setAttribute("data-block", "0");
+            startContainer.parentElement.insertAdjacentElement("beforebegin", pTempElement);
+            setSelectionFocus(range);
+            afterRenderEvent(vditor);
+            scrollCenter(vditor);
+            event.preventDefault();
+            return true;
+        }
+
         // enter++: 标题变大
         if (matchHotKey("⌘=", event)) {
             const index = parseInt((headingElement as HTMLElement).tagName.substr(1), 10) - 1;
