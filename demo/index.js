@@ -62,7 +62,7 @@ const initVditor = (language) => {
             position: 'right',
         },
         debugger: true,
-        typewriterMode: true,
+        typewriterMode: false,
         placeholder: 'Hello, Vditor!',
         preview: {
             markdown: {

@@ -59,6 +59,14 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
     const blockElement = hasClosestBlock(startContainer);
     const pElement = hasClosestByMatchTag(startContainer, "P");
 
+    // 解决最后一行太靠底部的问题
+    if (pElement && pElement === vditor.wysiwyg.element.lastElementChild &&
+        !isCtrl(event) && !event.shiftKey && !event.altKey && event.key === "Enter") {
+        const wysiwygElement = vditor.wysiwyg.element;
+        wysiwygElement.scrollTop = wysiwygElement.scrollHeight - wysiwygElement.clientHeight;
+        console.log('sssss')
+    }
+
     // md 处理
     if (fixMarkdown(event, vditor, pElement, range)) {
         return true;

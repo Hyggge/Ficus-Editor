@@ -116,13 +116,13 @@ export const setPadding = (vditor: IVditor) => {
   if (vditor.wysiwyg.element.parentElement.style.display !== "none") {
     const padding = (vditor.wysiwyg.element.parentElement.clientWidth
       - vditor.options.preview.maxWidth) / 2;
-    vditor.wysiwyg.element.style.padding = `10px ${Math.max(minPadding, padding)}px`;
+    vditor.wysiwyg.element.style.padding = `10px ${Math.max(minPadding, padding)}px 150px ${Math.max(minPadding, padding)}px`;
   }
 
   if (vditor.ir.element.parentElement.style.display !== "none") {
     const padding = (vditor.ir.element.parentElement.clientWidth
       - vditor.options.preview.maxWidth) / 2;
-    vditor.ir.element.style.padding = `10px ${Math.max(minPadding, padding)}px`;
+    vditor.ir.element.style.padding = `10px ${Math.max(minPadding, padding)}px 150px ${Math.max(minPadding, padding)}px`;
   }
 
   if (vditor.preview.element.style.display !== "block") {
