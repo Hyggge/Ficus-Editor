@@ -28,7 +28,7 @@ export const exportPDF = (vditor: IVditor, autoDownload: boolean = true) => {
     iframe.contentDocument.open();
     iframe.contentDocument.write(`<link rel="stylesheet" href="${Constants.CDN}/dist/index.css"/>
 <script src="${Constants.CDN}/dist/method.min.js"></script>
-<div id="preview" style="width: 800px"></div>
+<div id="preview" class="vditor-preview" style="width: 800px"></div>
 <script>
 window.addEventListener("message", (e) => {
   if(!e.data) {
@@ -62,7 +62,7 @@ export const exportHTML = (vditor: IVditor, autoDownload: boolean = true) => {
     const html = `<html><head><link rel="stylesheet" type="text/css" href="${Constants.CDN}/dist/index.css"/>
 <script src="${Constants.CDN}/dist/js/i18n/${vditor.options.lang}.js"></script>
 <script src="${Constants.CDN}/dist/method.min.js"></script></head>
-<body><div class="vditor-reset" id="preview" style="padding: 0px 30px 0px">${content}</div>
+<body><div class="vditor-reset vditor-preview" id="preview" style="padding: 0px 30px 0px">${content}</div>
 <script>
     const previewElement = document.getElementById('preview')
     Vditor.setContentTheme('${vditor.options.preview.theme.current}', '${Constants.CDN}/dist/css/content-theme');
