@@ -13,11 +13,11 @@ export const highlightRender = (hljsOption?: IHljs, element: HTMLElement | Docum
     style = "github";
   }
   const vditorHljsStyle = document.getElementById("vditorHljsStyle") as HTMLLinkElement;
-  const href = `${cdn}/dist/js/highlight.js/styles/${style}.css`;
+  const href = `${cdn}/dist/js/highlight.js/styles/${style}.min.css`;
   if (vditorHljsStyle && vditorHljsStyle.href !== href) {
     vditorHljsStyle.remove();
   }
-  addStyle(`${cdn}/dist/js/highlight.js/styles/${style}.css`, "vditorHljsStyle");
+  addStyle(`${cdn}/dist/js/highlight.js/styles/${style}.min.css`, "vditorHljsStyle");
 
   if (hljsOption.enable === false) {
     return;
@@ -28,7 +28,7 @@ export const highlightRender = (hljsOption?: IHljs, element: HTMLElement | Docum
     return;
   }
 
-  addScript(`${cdn}/dist/js/highlight.js/highlight.pack.js`, "vditorHljsScript").then(() => {
+  addScript(`${cdn}/dist/js/highlight.js/highlight.min.js`, "vditorHljsScript").then(() => {
     addScript(`${cdn}/dist/js/highlight.js/solidity.min.js`, "vditorHljsSolidityScript").then(() => {
       addScript(`${cdn}/dist/js/highlight.js/yul.min.js`, "vditorHljsYulScript").then(() => {
         element.querySelectorAll("pre > code").forEach((block) => {
