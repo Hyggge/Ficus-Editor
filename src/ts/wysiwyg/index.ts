@@ -284,6 +284,12 @@ class WYSIWYG {
                     setRangeByWbr(vditor.wysiwyg.element, range);
                 },
             });
+
+            // 如果输入位置在页面尾部，需要调整滚动栏
+            const cursorTop = getCursorPosition(vditor[vditor.currentMode].element).top;
+            if (cursorTop > vditor.wysiwyg.element.clientHeight - 150) {
+                vditor.wysiwyg.element.scrollTop += cursorTop - vditor.wysiwyg.element.clientHeight + 150;
+            }
         });
 
         // 中文处理
@@ -373,6 +379,12 @@ class WYSIWYG {
             }
 
             input(vditor, range, event);
+
+            // 如果输入位置在页面尾部，需要调整滚动栏
+            const cursorTop = getCursorPosition(vditor[vditor.currentMode].element).top;
+            if (cursorTop > vditor.wysiwyg.element.clientHeight - 150) {
+                vditor.wysiwyg.element.scrollTop += cursorTop - vditor.wysiwyg.element.clientHeight + 150;
+            }
         });
 
         this.element.addEventListener("click", (event: MouseEvent & { target: HTMLElement }) => {

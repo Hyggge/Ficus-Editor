@@ -56,7 +56,7 @@ const initVditor = (language) => {
         toolbar,
         lang: language,
         mode: 'wysiwyg',
-        height: window.innerHeight + 100,
+        height: 1000,
         outline: {
             enable: true,
             position: 'right',
@@ -72,7 +72,7 @@ const initVditor = (language) => {
                 autoSpace: true,
             },
             math: {
-                engine: 'KaTeX',
+                engine: 'MathJax',
             },
         },
         toolbarConfig: {
