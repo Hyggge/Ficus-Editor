@@ -227,8 +227,8 @@ class WYSIWYG {
             const top = parseInt(this.popover.getAttribute("data-top"), 10);
             if (vditor.options.height !== "auto") {
                 if (vditor.options.toolbarConfig.pin && vditor.toolbar.element.getBoundingClientRect().top === 0) {
-                    const popoverTop = Math.max(window.scrollY - vditor.element.offsetTop - 8,
-                        Math.min(top - vditor.wysiwyg.element.scrollTop, this.element.clientHeight - 21)) + "px";
+                    const popoverTop = Math.max(window.scrollY - vditor.element.offsetTop - 32,
+                        Math.min(top - vditor.wysiwyg.element.scrollTop, this.element.clientHeight - 32)) + "px";
                     if (this.popover.style.display === "block") {
                         this.popover.style.top = popoverTop;
                     }
@@ -240,7 +240,7 @@ class WYSIWYG {
             } else if (!vditor.options.toolbarConfig.pin) {
                 return;
             }
-            const popoverTop1 = Math.max(top, (window.scrollY - vditor.element.offsetTop - 8)) + "px";
+            const popoverTop1 = Math.max(top, (window.scrollY - vditor.element.offsetTop - 32)) + "px";
             if (this.popover.style.display === "block") {
                 this.popover.style.top = popoverTop1;
             }
@@ -258,11 +258,11 @@ class WYSIWYG {
                 return;
             }
             const top = parseInt(this.popover.getAttribute("data-top"), 10) - vditor.wysiwyg.element.scrollTop;
-            let max = -8;
+            let max = -32;
             if (vditor.options.toolbarConfig.pin && vditor.toolbar.element.getBoundingClientRect().top === 0) {
                 max = window.scrollY - vditor.element.offsetTop + max;
             }
-            const topPx = Math.max(max, Math.min(top, this.element.clientHeight - 21)) + "px";
+            const topPx = Math.max(max, Math.min(top, this.element.clientHeight - 32)) + "px";
             this.popover.style.top = topPx;
             this.selectPopover.style.top = topPx;
         });

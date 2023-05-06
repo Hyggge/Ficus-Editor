@@ -798,10 +798,10 @@ const setPopoverPosition = (vditor: IVditor, element: HTMLElement) => {
     vditor.wysiwyg.popover.style.left = "0";
     vditor.wysiwyg.popover.style.display = "block";
     vditor.wysiwyg.popover.style.top =
-        Math.max(-8, targetElement.offsetTop - 21 - vditor.wysiwyg.element.scrollTop) + "px";
+        Math.max(-32, targetElement.offsetTop - 32 - vditor.wysiwyg.element.scrollTop) + "px";
     vditor.wysiwyg.popover.style.left =
         Math.min(targetElement.offsetLeft, vditor.wysiwyg.element.clientWidth - vditor.wysiwyg.popover.clientWidth) + "px";
-    vditor.wysiwyg.popover.setAttribute("data-top", (targetElement.offsetTop - 21).toString());
+    vditor.wysiwyg.popover.setAttribute("data-top", (targetElement.offsetTop - 32).toString());
 };
 
 export const genLinkRefPopover = (vditor: IVditor, linkRefElement: HTMLElement, range = getSelection().getRangeAt(0)) => {
