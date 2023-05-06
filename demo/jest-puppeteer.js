@@ -27,13 +27,13 @@ window.vditorTest = new Vditor('vditorTest', {
     },
   },
   hint: {
-    emojiPath: 'https://unpkg.com/vditor/dist/images/emoji',
+    emojiPath: 'https://unpkg.com/ficus-editor/dist/images/emoji',
     emojiTail: '<a href="https://ld246.com/settings/function" target="_blank">设置常用表情</a>',
     emoji: {
       '+1': '👍',
       '-1': '👎',
-      'trollface': 'https://unpkg.com/vditor@1.3.1/dist/images/emoji/trollface.png',
-      'huaji': 'https://unpkg.com/vditor@1.3.1/dist/images/emoji/huaji.gif',
+      'trollface': 'https://unpkg.com/ficus-editor/dist/images/emoji/trollface.png',
+      'huaji': 'https://unpkg.com/ficus-editor/dist/images/emoji/huaji.gif',
     },
     at: (key) => {
       console.log(`atUser: ${key}`)
