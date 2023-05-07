@@ -635,12 +635,14 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                         ? codeElement.className.split("-")[1].split(" ")[0]
                         : "";
                 language.oninput = (e: InputEvent) => {
+                    // 根据输入的语言，设置code-block的class
                     if (language.value.trim() !== "") {
                         codeElement.className = `language-${language.value}`;
                     } else {
                         codeElement.className = "";
                         vditor.hint.recentLanguage = "";
                     }
+                    // 将编辑区的内容同步到预览区
                     if (blockRenderElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
                         blockRenderElement.lastElementChild.innerHTML =
                             blockRenderElement.firstElementChild.innerHTML;
@@ -683,6 +685,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                     ) {
                         return;
                     }
+                    // 找到匹配的语言，显示在下拉框中
                     const matchLangData: IHintData[] = [];
                     const key = language.value.substring(0, language.selectionStart);
                     Constants.CODE_LANGUAGES.forEach((keyName) => {

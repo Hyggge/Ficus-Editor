@@ -19,7 +19,7 @@ export class Hint {
         this.element = document.createElement("div");
         this.element.className = "vditor-hint";
         this.recentLanguage = "";
-        hintExtends.push({key: ":"});
+        hintExtends.push({key: ":"}); // 已经包含了emoji提示`:`
     }
 
     public render(vditor: IVditor) {
@@ -29,24 +29,27 @@ export class Hint {
         let currentLineValue: string;
         const range = getSelection().getRangeAt(0);
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
-
-        const key = this.getKey(currentLineValue, vditor.options.hint.extend);
-
+        console.log(currentLineValue)
+        const key = this.getKey(currentLineValue, vditor.options.hint.extend); // 这里的key表示splitChar后面的字符
+        console.log(key)
         if (typeof key === "undefined") {
             this.element.style.display = "none";
             clearTimeout(this.timeId);
         } else {
             if (this.splitChar === ":") {
                 const emojiHint = key === "" ? vditor.options.hint.emoji : vditor.lute.GetEmojis();
+                console.log(emojiHint)
                 const matchEmojiData: IHintData[] = [];
                 Object.keys(emojiHint).forEach((keyName) => {
                     if (keyName.indexOf(key.toLowerCase()) === 0) {
+                        // 如果是图片链接
                         if (emojiHint[keyName].indexOf(".") > -1) {
                             matchEmojiData.push({
                                 html: `<img src="${emojiHint[keyName]}" title=":${keyName}:"/> :${keyName}:`,
                                 value: `:${keyName}:`,
                             });
                         } else {
+                            // html表示列表展示的内容，value表示插入的内容
                             matchEmojiData.push({
                                 html: `<span class="vditor-hint__emoji">${emojiHint[keyName]}</span>${keyName}`,
                                 value: emojiHint[keyName],
@@ -81,11 +84,12 @@ export class Hint {
         const y = textareaPosition.top;
         let hintsHTML = "";
 
+        // 遍历匹配的数据，构造下拉框的html
         data.forEach((hintData, i) => {
             if (i > 7) {
                 return;
             }
-            // process high light
+            // 加粗匹配的字符
             let html = hintData.html;
             if (key !== "") {
                 const lastIndex = html.lastIndexOf(">") + 1;
@@ -98,10 +102,14 @@ export class Hint {
                     html = html.substr(0, lastIndex) + replaceHtml;
                 }
             }
+            // 构造对应的按钮，加入到hintsHTML中
+            // data-value表示插入的内容
+            // html表示列表按钮展示的内容
             hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)} "
 ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         });
 
+        // 将生成的下拉框html插入到this.element中，调整下拉框的位置，同时进行显示
         this.element.innerHTML = hintsHTML;
         const lineHeight = parseInt(document.defaultView.getComputedStyle(editorElement, null)
             .getPropertyValue("line-height"), 10);
@@ -110,6 +118,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         this.element.style.display = "block";
         this.element.style.right = "auto";
 
+        // 为下拉框的每个button绑定click事件，事件发生时通过fillEmoji方法进行内容的插入
         this.element.querySelectorAll("button").forEach((element) => {
             element.addEventListener("click", (event) => {
                 this.fillEmoji(element, vditor);
