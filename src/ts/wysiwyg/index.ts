@@ -444,6 +444,7 @@ class WYSIWYG {
             }
 
             highlightToolbarWYSIWYG(vditor);
+            vditor.hint.render(vditor)
 
             // 点击后光标落于预览区，需展开代码块
             let previewElement = hasClosestByClassName(event.target, "vditor-wysiwyg__preview");

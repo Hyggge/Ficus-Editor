@@ -85,6 +85,7 @@ class Editor {
 
         this.element.addEventListener("click", (event: MouseEvent) => {
             scrollCenter(vditor)
+            vditor.hint.render(vditor)
         })
 
         this.element.addEventListener("input", (event: InputEvent) => {
