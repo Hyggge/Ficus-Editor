@@ -294,11 +294,21 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         if (vditor.currentMode === "wysiwyg") {
             let preElement = hasClosestByClassName(range.startContainer, "vditor-wysiwyg__block");
             if (preElement && preElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
+                // 将编辑区的内容同步到预览区
                 preElement.lastElementChild.innerHTML = preElement.firstElementChild.innerHTML;
+                // 保存光标位置
                 insertHTML('<wbr>', vditor)
-                let previousElement = preElement.previousElementSibling;
-                preElement.outerHTML = vditor.lute.SpinVditorDOM(preElement.outerHTML);
-                preElement = previousElement.nextElementSibling as HTMLElement;
+                // 调用SpinVditorDOM方法，进行初步渲染
+                preElement.insertAdjacentHTML("afterend", vditor.lute.SpinVditorDOM(preElement.outerHTML));
+                preElement = preElement.nextElementSibling as HTMLElement;
+                preElement.previousElementSibling.remove();
+                // 对于行内数学公式，SpinVditorDOM会自动在外面包裹一层p标签，这里需要去掉
+                if (preElement.tagName === "P") {
+                    preElement.insertAdjacentHTML("afterend", preElement.innerHTML);
+                    preElement = preElement.nextElementSibling as HTMLElement;
+                    preElement.previousElementSibling.remove();
+                }
+
                 showCode(preElement.lastElementChild as HTMLElement, vditor, false);
                 processCodeRender(preElement.lastElementChild as HTMLElement, vditor);
                 setRangeByWbr(preElement, range)
