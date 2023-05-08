@@ -69,7 +69,7 @@ export class Hint {
                 key: '\\',
                 hint: (key) =>
                 {
-                    console.log('key ,',key)
+                    console.log('key :' + key + "!")
                     let ret :IHintData[]= []
                     // if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
                     if (key != "")
@@ -104,9 +104,10 @@ export class Hint {
         }
         let currentLineValue: string;
         const range = getSelection().getRangeAt(0);
+        // 截取开头和光标位置之间的字符串
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
         // 当前行
-        console.log("line:", currentLineValue)
+        console.log("lineBeforeCursion: ", currentLineValue + "!")
         const key = this.getKey(currentLineValue, vditor.options.hint.extend);
 
         if (typeof key === "undefined") {
@@ -186,7 +187,7 @@ export class Hint {
             // 构造对应的按钮，加入到hintsHTML中
             // data-value表示插入的内容
             // html表示列表按钮展示的内容
-            hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)} "
+            hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)}"
 ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         });
 
@@ -258,7 +259,19 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             }
         }
 
+        // 找到光标位置后面最近的终止符号——
+        // 空白符, '{', '}', '[', ']', '(', ')', '\',
+        // '$', ';', ',', ':', '.', '%', '?', '!', '|'
+        let str = range.startContainer.textContent.substring(range.startOffset);
+        let endPos = str.search(/\s|{|}|\[|\]|\(|\)|\\|\$|\;|\,|\:|\.|\%|\?|\!|\|/)
+        if (endPos === -1) {
+            endPos = range.startContainer.textContent.length
+        } else {
+            endPos = range.startOffset + endPos
+        }
+
         range.setStart(range.startContainer, this.lastIndex);
+        range.setEnd(range.startContainer, endPos)
         range.deleteContents();
 
         if (vditor.options.hint.parse) {
