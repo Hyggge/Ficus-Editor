@@ -1,3 +1,4 @@
+import { InsertAfter } from "../toolbar/InsertAfter";
 import {
     getTopList,
     hasClosestBlock, hasClosestByAttribute, hasTopClosestByTag,
@@ -5,13 +6,36 @@ import {
 import { hasClosestByTag} from "../util/hasClosestByHeadings";
 import {log} from "../util/log";
 import {processCodeRender} from "../util/processCode";
-import {setRangeByWbr} from "../util/selection";
+import {getCursorPosition, insertHTML, setRangeByWbr} from "../util/selection";
 import {renderToc} from "../util/toc";
 import {afterRenderEvent} from "./afterRenderEvent";
 import {previoueIsEmptyA} from "./inlineTag";
 
 export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
     let blockElement = hasClosestBlock(range.startContainer);
+
+    // 这个要不要做成用户可配置的？
+    let completeMap = new Map([
+        ['(', ')'],
+        ['[', ']'], 
+        ['{', '}'], 
+        ['《', '》'], 
+        ['（', '）'],
+    ])
+    if (event.inputType === 'insertText')
+    {
+        // 保存光标
+        vditor.wysiwyg.element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove();
+        });
+        insertHTML('<wbr>', vditor)
+        if (completeMap.get(event.data) != null)
+        {
+            insertHTML(completeMap.get(event.data), vditor) 
+        }
+        // 设置光标
+        setRangeByWbr(vditor.wysiwyg.element, range);
+    }
 
     if (!blockElement) {
         // 使用顶级块元素，应使用 innerHTML
