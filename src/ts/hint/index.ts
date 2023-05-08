@@ -3,9 +3,10 @@ import {processAfterRender} from "../ir/process";
 import {code160to32} from "../util/code160to32";
 import {isCtrl} from "../util/compatibility";
 import {execAfterRender} from "../util/fixBrowserBehavior";
-import {hasClosestByAttribute, hasClosestByClassName} from "../util/hasClosest";
+import {hasClosestByAttribute, hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
 import {processCodeRender} from "../util/processCode";
-import {getCursorPosition, insertHTML, setSelectionFocus} from "../util/selection";
+import {getCursorPosition, insertHTML, setRangeByWbr, setSelectionFocus} from "../util/selection";
+import { showCode } from "../wysiwyg/showCode";
 import * as katexFuncs from './katex-funcs';
 
 export class Hint {
@@ -66,15 +67,15 @@ export class Hint {
         hintExtends.push(
             {
                 key: '\\',
-                hint: (key) => 
+                hint: (key) =>
                 {
-                    console.log('key ,',key)
+                    console.log('key :' + key + "!")
                     let ret :IHintData[]= []
                     // if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
                     if (key != "")
                     {
                         this.latexList.forEach(
-                            (kw) => 
+                            (kw) =>
                             {
                                 // key 是 kw 的前缀
                                 if (key.toLowerCase() === kw.substring(0, key.length).toLowerCase()) {
@@ -85,7 +86,7 @@ export class Hint {
                     }
                     else {
                         this.latexList.forEach(
-                            (kw) => 
+                            (kw) =>
                             {
                                 ret.push({value: '\\' + kw, html: '\\' + kw})
                             }
@@ -103,9 +104,10 @@ export class Hint {
         }
         let currentLineValue: string;
         const range = getSelection().getRangeAt(0);
+        // 截取开头和光标位置之间的字符串
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
         // 当前行
-        console.log("line:", currentLineValue)
+        console.log("lineBeforeCursion: ", currentLineValue + "!")
         const key = this.getKey(currentLineValue, vditor.options.hint.extend);
 
         if (typeof key === "undefined") {
@@ -114,15 +116,18 @@ export class Hint {
         } else {
             if (this.splitChar === ":") {
                 const emojiHint = key === "" ? vditor.options.hint.emoji : vditor.lute.GetEmojis();
+                console.log(emojiHint)
                 const matchEmojiData: IHintData[] = [];
                 Object.keys(emojiHint).forEach((keyName) => {
                     if (keyName.indexOf(key.toLowerCase()) === 0) {
+                        // 如果是图片链接
                         if (emojiHint[keyName].indexOf(".") > -1) {
                             matchEmojiData.push({
                                 html: `<img src="${emojiHint[keyName]}" title=":${keyName}:"/> :${keyName}:`,
                                 value: `:${keyName}:`,
                             });
                         } else {
+                            // html表示列表展示的内容，value表示插入的内容
                             matchEmojiData.push({
                                 html: `<span class="vditor-hint__emoji">${emojiHint[keyName]}</span>${keyName}`,
                                 value: emojiHint[keyName],
@@ -134,6 +139,10 @@ export class Hint {
             } else {
                 vditor.options.hint.extend.forEach((item) => {
                     if (item.key === this.splitChar) {
+                        console.log(this.isMath(vditor))
+                        if (item.key === "\\" && !this.isMath(vditor)) {
+                            return;
+                        }
                         clearTimeout(this.timeId);
                         this.timeId = window.setTimeout(async () => {
                             this.genHTML(await item.hint(key), key, vditor);
@@ -157,11 +166,12 @@ export class Hint {
         const y = textareaPosition.top;
         let hintsHTML = "";
 
+        // 遍历匹配的数据，构造下拉框的html
         data.forEach((hintData, i) => {
             if (i > 7) {
                 return;
             }
-            // process high light
+            // 加粗匹配的字符
             let html = hintData.html;
             if (key !== "") {
                 const lastIndex = html.lastIndexOf(">") + 1;
@@ -174,10 +184,14 @@ export class Hint {
                     html = html.substr(0, lastIndex) + replaceHtml;
                 }
             }
-            hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)} "
+            // 构造对应的按钮，加入到hintsHTML中
+            // data-value表示插入的内容
+            // html表示列表按钮展示的内容
+            hintsHTML += `<button data-value="${encodeURIComponent(hintData.value)}"
 ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         });
 
+        // 将生成的下拉框html插入到this.element中，调整下拉框的位置，同时进行显示
         this.element.innerHTML = hintsHTML;
         const lineHeight = parseInt(document.defaultView.getComputedStyle(editorElement, null)
             .getPropertyValue("line-height"), 10);
@@ -186,6 +200,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         this.element.style.display = "block";
         this.element.style.right = "auto";
 
+        // 为下拉框的每个button绑定click事件，事件发生时通过fillEmoji方法进行内容的插入
         this.element.querySelectorAll("button").forEach((element) => {
             element.addEventListener("click", (event) => {
                 this.fillEmoji(element, vditor);
@@ -244,7 +259,19 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             }
         }
 
+        // 找到光标位置后面最近的终止符号——
+        // 空白符, '{', '}', '[', ']', '(', ')', '\',
+        // '$', ';', ',', ':', '.', '%', '?', '!', '|'
+        let str = range.startContainer.textContent.substring(range.startOffset);
+        let endPos = str.search(/\s|{|}|\[|\]|\(|\)|\\|\$|\;|\,|\:|\.|\%|\?|\!|\|/)
+        if (endPos === -1) {
+            endPos = range.startContainer.textContent.length
+        } else {
+            endPos = range.startOffset + endPos
+        }
+
         range.setStart(range.startContainer, this.lastIndex);
+        range.setEnd(range.startContainer, endPos)
         range.deleteContents();
 
         if (vditor.options.hint.parse) {
@@ -265,10 +292,16 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         setSelectionFocus(range);
 
         if (vditor.currentMode === "wysiwyg") {
-            const preElement = hasClosestByClassName(range.startContainer, "vditor-wysiwyg__block");
+            let preElement = hasClosestByClassName(range.startContainer, "vditor-wysiwyg__block");
             if (preElement && preElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
                 preElement.lastElementChild.innerHTML = preElement.firstElementChild.innerHTML;
+                insertHTML('<wbr>', vditor)
+                let previousElement = preElement.previousElementSibling;
+                preElement.outerHTML = vditor.lute.SpinVditorDOM(preElement.outerHTML);
+                preElement = previousElement.nextElementSibling as HTMLElement;
+                showCode(preElement.lastElementChild as HTMLElement, vditor, false);
                 processCodeRender(preElement.lastElementChild as HTMLElement, vditor);
+                setRangeByWbr(preElement, range)
             }
         } else if (vditor.currentMode === "ir") {
             const preElement = hasClosestByClassName(range.startContainer, "vditor-ir__marker--pre");
@@ -310,7 +343,8 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
                 currentHintElement.previousElementSibling.className = "vditor-hint--current";
             }
             return true;
-        } else if (!isCtrl(event) && !event.shiftKey && !event.altKey && event.key === "Enter" && !event.isComposing) {
+        } else if (!isCtrl(event) && !event.shiftKey && !event.altKey &&
+                    (event.key === "Enter" || event.key === "Tab") && !event.isComposing) {
             event.preventDefault();
             event.stopPropagation();
             this.fillEmoji(currentHintElement, vditor);
@@ -352,4 +386,37 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         }
         return key;
     }
+
+    private isMath(vditor: IVditor) {
+        // 所见即所得模式
+        const range = getSelection().getRangeAt(0);
+        const startContainer = range.startContainer;
+        if (vditor.currentMode === "wysiwyg") {
+            const codeElement = hasClosestByMatchTag(startContainer, "CODE") as HTMLElement;
+            // 内联数学公式和数学公式块
+            if (codeElement && (codeElement.getAttribute("data-type") === "math-inline" || codeElement.getAttribute("data-type") === "math-block")) {
+                return true;
+            }
+        }
+
+        // 源码模式
+        else if (vditor.currentMode === "sv") {
+            const divElement = hasClosestByMatchTag(startContainer, "DIV") as HTMLElement;
+            // 内联数学公式
+            if (startContainer.nodeType === 3 && startContainer.previousSibling?.nodeType === 1 &&
+                    (startContainer.previousSibling as HTMLElement).matches("span.vditor-sv__marker") &&
+                    (startContainer.previousSibling as HTMLElement).innerHTML === "$") {
+                console.log('内联数学公式')
+                return true;
+            }
+            // 数学公式块
+            if (divElement && divElement.firstElementChild.matches("span.vditor-sv__marker") &&
+                    divElement.firstElementChild.innerHTML === "$$") {
+                console.log('数学公式块')
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -635,12 +635,14 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                         ? codeElement.className.split("-")[1].split(" ")[0]
                         : "";
                 language.oninput = (e: InputEvent) => {
+                    // 根据输入的语言，设置code-block的class
                     if (language.value.trim() !== "") {
                         codeElement.className = `language-${language.value}`;
                     } else {
                         codeElement.className = "";
                         vditor.hint.recentLanguage = "";
                     }
+                    // 将编辑区的内容同步到预览区
                     if (blockRenderElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
                         blockRenderElement.lastElementChild.innerHTML =
                             blockRenderElement.firstElementChild.innerHTML;
@@ -683,6 +685,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                     ) {
                         return;
                     }
+                    // 找到匹配的语言，显示在下拉框中
                     const matchLangData: IHintData[] = [];
                     const key = language.value.substring(0, language.selectionStart);
                     Constants.CODE_LANGUAGES.forEach((keyName) => {
@@ -741,6 +744,13 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             genAPopover(vditor, aElement, range);
         }
 
+        // img popover
+        const imgElement = hasClosestByMatchTag(typeElement, "IMG") as HTMLElement;
+        if (imgElement) {
+            setCurrentToolbar(vditor.toolbar.elements, ["img-link"]);
+            genImagePopover(null, vditor, imgElement);
+        }
+
         if (
             !blockquoteElement &&
             !liElement &&
@@ -750,7 +760,8 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             !linkRefElement &&
             !footnotesRefElement &&
             !headingElement &&
-            !tocElement
+            !tocElement &&
+            !imgElement
         ) {
             const blockElement = hasClosestByAttribute(typeElement, "data-block", "0");
             if (
@@ -779,12 +790,6 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             backslashElement.querySelector("span").style.display = "inline";
         }
 
-        // img popover (why here?)
-        const imgElement = hasClosestByMatchTag(typeElement, "IMG") as HTMLElement;
-        if (imgElement) {
-            setCurrentToolbar(vditor.toolbar.elements, ["img-link"]);
-            genImagePopover(null, vditor, imgElement);
-        }
 
     }, 200);
 };
@@ -798,10 +803,10 @@ const setPopoverPosition = (vditor: IVditor, element: HTMLElement) => {
     vditor.wysiwyg.popover.style.left = "0";
     vditor.wysiwyg.popover.style.display = "block";
     vditor.wysiwyg.popover.style.top =
-        Math.max(-8, targetElement.offsetTop - 21 - vditor.wysiwyg.element.scrollTop) + "px";
+        Math.max(-32, targetElement.offsetTop - 32 - vditor.wysiwyg.element.scrollTop) + "px";
     vditor.wysiwyg.popover.style.left =
         Math.min(targetElement.offsetLeft, vditor.wysiwyg.element.clientWidth - vditor.wysiwyg.popover.clientWidth) + "px";
-    vditor.wysiwyg.popover.setAttribute("data-top", (targetElement.offsetTop - 21).toString());
+    vditor.wysiwyg.popover.setAttribute("data-top", (targetElement.offsetTop - 32).toString());
 };
 
 export const genLinkRefPopover = (vditor: IVditor, linkRefElement: HTMLElement, range = getSelection().getRangeAt(0)) => {
