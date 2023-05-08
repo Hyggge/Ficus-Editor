@@ -3,9 +3,10 @@ import {processAfterRender} from "../ir/process";
 import {code160to32} from "../util/code160to32";
 import {isCtrl} from "../util/compatibility";
 import {execAfterRender} from "../util/fixBrowserBehavior";
-import {hasClosestByAttribute, hasClosestByClassName} from "../util/hasClosest";
+import {hasClosestByAttribute, hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
 import {processCodeRender} from "../util/processCode";
-import {getCursorPosition, insertHTML, setSelectionFocus} from "../util/selection";
+import {getCursorPosition, insertHTML, setRangeByWbr, setSelectionFocus} from "../util/selection";
+import { showCode } from "../wysiwyg/showCode";
 import * as katexFuncs from './katex-funcs';
 
 export class Hint {
@@ -137,6 +138,10 @@ export class Hint {
             } else {
                 vditor.options.hint.extend.forEach((item) => {
                     if (item.key === this.splitChar) {
+                        console.log(this.isMath(vditor))
+                        if (item.key === "\\" && !this.isMath(vditor)) {
+                            return;
+                        }
                         clearTimeout(this.timeId);
                         this.timeId = window.setTimeout(async () => {
                             this.genHTML(await item.hint(key), key, vditor);
@@ -361,4 +366,37 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         }
         return key;
     }
+
+    private isMath(vditor: IVditor) {
+        // 所见即所得模式
+        const range = getSelection().getRangeAt(0);
+        const startContainer = range.startContainer;
+        if (vditor.currentMode === "wysiwyg") {
+            const codeElement = hasClosestByMatchTag(startContainer, "CODE") as HTMLElement;
+            // 内联数学公式和数学公式块
+            if (codeElement && (codeElement.getAttribute("data-type") === "math-inline" || codeElement.getAttribute("data-type") === "math-block")) {
+                return true;
+            }
+        }
+
+        // 源码模式
+        else if (vditor.currentMode === "sv") {
+            const divElement = hasClosestByMatchTag(startContainer, "DIV") as HTMLElement;
+            // 内联数学公式
+            if (startContainer.nodeType === 3 && startContainer.previousSibling?.nodeType === 1 &&
+                    (startContainer.previousSibling as HTMLElement).matches("span.vditor-sv__marker") &&
+                    (startContainer.previousSibling as HTMLElement).innerHTML === "$") {
+                console.log('内联数学公式')
+                return true;
+            }
+            // 数学公式块
+            if (divElement && divElement.firstElementChild.matches("span.vditor-sv__marker") &&
+                    divElement.firstElementChild.innerHTML === "$$") {
+                console.log('数学公式块')
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
