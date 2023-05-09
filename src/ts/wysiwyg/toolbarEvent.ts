@@ -143,7 +143,6 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             range.setStart(node.firstChild, 1);
             range.collapse(true);
             setSelectionFocus(range);
-            console.log(1)
         } else {
             document.execCommand('BackColor', false, 'yellow')
             // 将选中的文字用 mark 包裹

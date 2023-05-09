@@ -54,7 +54,6 @@ export class Hint {
         this.element.className = "vditor-hint";
         this.recentLanguage = "";
         hintExtends.push({key: ":"});
-        console.log(this.latexList)
 
         this.c0.forEach(
             (item) => {this.latexList.push(item) + '<wbr>'}
@@ -72,11 +71,9 @@ export class Hint {
                 key: '\\',
                 hint: (key) =>
                 {
-                    console.log('key :' + key + "!")
                     let ret :IHintData[]= []
                     let ret0 :IHintData[]= []
-                    // if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
-                    if (key != "")
+                    if (key !== "")
                     {
                         this.latexList.forEach(
                             (kw) =>
@@ -146,7 +143,6 @@ export class Hint {
         // 截取开头和光标位置之间的字符串
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
         // 当前行
-        console.log("lineBeforeCursion: ", currentLineValue + "!")
         const key = this.getKey(currentLineValue, vditor.options.hint.extend);
 
         if (typeof key === "undefined") {
@@ -155,7 +151,6 @@ export class Hint {
         } else {
             if (this.splitChar === ":") {
                 const emojiHint = key === "" ? vditor.options.hint.emoji : vditor.lute.GetEmojis();
-                console.log(emojiHint)
                 const matchEmojiData: IHintData[] = [];
                 Object.keys(emojiHint).forEach((keyName) => {
                     if (keyName.indexOf(key.toLowerCase()) === 0) {
@@ -178,7 +173,6 @@ export class Hint {
             } else {
                 vditor.options.hint.extend.forEach((item) => {
                     if (item.key === this.splitChar) {
-                        console.log(this.isMath(vditor))
                         if ((item.key === "\\" || item.key === "begin{") && !this.isMath(vditor)) {
                             return;
                         }
@@ -337,8 +331,6 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             if (preElement && preElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
                 // 将编辑区的内容同步到预览区
                 preElement.lastElementChild.innerHTML = preElement.firstElementChild.innerHTML;
-                // 保存光标位置
-                insertHTML('<wbr>', vditor)
                 // 调用SpinVditorDOM方法，进行初步渲染
                 preElement.insertAdjacentHTML("afterend", vditor.lute.SpinVditorDOM(preElement.outerHTML));
                 preElement = preElement.nextElementSibling as HTMLElement;
@@ -352,6 +344,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
 
                 showCode(preElement.lastElementChild as HTMLElement, vditor, false);
                 processCodeRender(preElement.lastElementChild as HTMLElement, vditor);
+                // 由于hint已经带了一个wbr标签，所以这里只需要将光标移动到wbr标签所在位置即可
                 setRangeByWbr(preElement, range)
             }
         } else if (vditor.currentMode === "ir") {
@@ -407,7 +400,6 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
     private getKey(currentLineValue: string, extend: IHintExtend[]) {
         this.lastIndex = -1;
         this.splitChar = "";
-        console.log('extend ', extend)
 
         // 找到最后一个出现的 key
         extend.forEach((item) => {
@@ -457,13 +449,11 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             if (startContainer.nodeType === 3 && startContainer.previousSibling?.nodeType === 1 &&
                     (startContainer.previousSibling as HTMLElement).matches("span.vditor-sv__marker") &&
                     (startContainer.previousSibling as HTMLElement).innerHTML === "$") {
-                console.log('内联数学公式')
                 return true;
             }
             // 数学公式块
             if (divElement && divElement.firstElementChild.matches("span.vditor-sv__marker") &&
                     divElement.firstElementChild.innerHTML === "$$") {
-                console.log('数学公式块')
                 return true;
             }
         }

@@ -9,7 +9,6 @@ export const getEditorRange = (vditor: IVditor) => {
     if (getSelection().rangeCount > 0) {
         range = getSelection().getRangeAt(0);
         if (element.isEqualNode(range.startContainer) || element.contains(range.startContainer)) {
-            console.log(1)
             return range;
         }
     }
