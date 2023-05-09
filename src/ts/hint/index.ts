@@ -113,6 +113,10 @@ export class Hint {
                 let ret :IHintData[]= []
                 if (key != "")
                 {
+                    if (key.indexOf('}') != -1)
+                    {
+                        return ret
+                    }
                     this.environments.forEach(
                         (kw) =>
                         {
@@ -409,6 +413,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         this.splitChar = "";
         console.log('extend ', extend)
 
+
         // 找到最后一个出现的 key
         extend.forEach((item) => {
             const currentLastIndex = currentLineValue.lastIndexOf(item.key);
@@ -419,7 +424,8 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         });
 
         let key;
-        if (this.lastIndex === -1) {
+        // 避免因为 ‘\\‘ 引起的误会，（结尾是多个 \ 的时候默认不弹出补全选项
+        if (this.lastIndex === -1 || (currentLineValue.length > 2 && currentLineValue.substring(currentLineValue.length - 2) === '\\\\')) {
             return key;
         }
         const lineArray = currentLineValue.split(this.splitChar);
