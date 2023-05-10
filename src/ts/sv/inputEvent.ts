@@ -1,6 +1,6 @@
 import {scrollCenter} from "../util/editorCommonEvent";
 import {hasClosestByAttribute} from "../util/hasClosest";
-import {getSelectPosition, setRangeByWbr} from "../util/selection";
+import {getSelectPosition, insertHTML, setRangeByWbr} from "../util/selection";
 import {getSideByType, processAfterRender, processSpinVditorSVDOM} from "./process";
 
 export const inputEvent = (vditor: IVditor, event?: InputEvent) => {
@@ -10,6 +10,31 @@ export const inputEvent = (vditor: IVditor, event?: InputEvent) => {
         startContainer = range.startContainer.childNodes[range.startOffset - 1];
     }
     let blockElement = hasClosestByAttribute(startContainer, "data-block", "0");
+
+    // 括号自动补全
+    let completeMap = new Map([
+        ['(', ')'],
+        ['[', ']'],
+        ['{', '}'],
+        ['《', '》'],
+        ['（', '）'],
+    ])
+
+    if (blockElement && event && event.inputType === 'insertText') {
+        // 保存光标
+        vditor.sv.element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove();
+        });
+        insertHTML('<wbr>', vditor)
+        if (completeMap.get(event.data) != null)
+        {
+            insertHTML(completeMap.get(event.data), vditor)
+        }
+        // 设置光标
+        setRangeByWbr(vditor.sv.element, range);
+    }
+
+
     // 不调用 lute 解析
     if (blockElement && event && (event.inputType === "deleteContentBackward" || event.data === " ")) {
         // 开始可以输入空格
