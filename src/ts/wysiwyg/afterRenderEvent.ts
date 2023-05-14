@@ -9,6 +9,9 @@ export const afterRenderEvent = (vditor: IVditor, options = {
     if (options.enableHint) {
         vditor.hint.render(vditor);
     }
+    if (vditor.search.isSearching) {
+        vditor.search.run(vditor, vditor.search.searchText, false);
+    }
     clearTimeout(vditor.wysiwyg.afterRenderTimeoutId);
     vditor.wysiwyg.afterRenderTimeoutId = window.setTimeout(() => {
         if (vditor.wysiwyg.composingLock) {

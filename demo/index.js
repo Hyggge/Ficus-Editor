@@ -1,5 +1,6 @@
 import Vditor from '../src/index'
 import '../src/assets/less/index.less'
+import { getElement } from '../src/ts/upload/getElement'
 
 // new VConsole()
 
@@ -145,3 +146,42 @@ window.setLang = (language) => {
     window.vditor.destroy()
     initVditor(language)
 }
+
+
+const searchOpenButton = document.getElementById("search-open");
+const searchCloseButton = document.getElementById("search-close");
+const searchPrevButton = document.getElementById("search-prev");
+const searchNextButton = document.getElementById("search-next");
+const replaceButton = document.getElementById("replace-button");
+const replaceAllButton = document.getElementById("replace-all-button");
+
+
+searchOpenButton.addEventListener("click", () => {
+    const input = document.getElementById("search-box");
+    const text = input.value;
+    window.vditor.vditor.search.run(window.vditor.vditor, text, true);
+})
+
+searchCloseButton.addEventListener("click", () => {
+    window.vditor.vditor.search.close(window.vditor.vditor)
+})
+
+searchPrevButton.addEventListener("click", () => {
+    window.vditor.vditor.search.prev(window.vditor.vditor)
+})
+
+searchNextButton.addEventListener("click", () => {
+    window.vditor.vditor.search.next(window.vditor.vditor)
+})
+
+replaceButton.addEventListener("click", () => {
+    const input = document.getElementById("replace-box");
+    const text = input.value;
+    window.vditor.vditor.search.replace(window.vditor.vditor, text, true);
+})
+
+replaceAllButton.addEventListener("click", () => {
+    const input = document.getElementById("replace-box");
+    const text = input.value;
+    window.vditor.vditor.search.replaceAll(window.vditor.vditor, text);
+})

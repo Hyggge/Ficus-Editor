@@ -752,6 +752,7 @@ interface IEChart {
 interface IVditor {
     element: HTMLElement;
     options: IOptions;
+    search: ISearch;
     originalInnerHTML: string;
     lute: Lute;
     currentMode: "sv" | "wysiwyg" | "ir";
@@ -843,4 +844,15 @@ interface IVditor {
 interface ICommentsData {
     id: string;
     top: number;
+}
+
+interface ISearch {
+    isSearching: boolean;
+    searchText: string;
+    run(vditor: IVditor, searchText: string, focus: boolean): void;
+    close(vditor: IVditor) :void;
+    next(vditor: IVditor) :void;
+    prev(vditor: IVditor) :void;
+    replace(vditor: IVditor, newText: string): void;
+    replaceAll(vditor: IVditor, newText: string): void;
 }

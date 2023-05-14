@@ -37,6 +37,7 @@ import {input} from "./ts/wysiwyg/input";
 import {renderDomByMd} from "./ts/wysiwyg/renderDomByMd";
 import {setEditMode} from "./ts/toolbar/EditMode"
 import {exportHTML, exportPDF} from "./ts/export/index"
+import { Search } from "./ts/search/index";
 
 class Vditor extends VditorMethod {
     public readonly version: string;
@@ -657,6 +658,7 @@ class Vditor extends VditorMethod {
             originalInnerHTML: id.innerHTML,
             outline: new Outline(window.VditorI18n.outline),
             tip: new Tip(),
+            search: new Search(),
         };
 
         this.vditor.sv = new Editor(this.vditor);
