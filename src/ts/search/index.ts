@@ -37,9 +37,9 @@ export class Search {
             wbr.parentNode.removeChild(wbr.nextSibling);
         }
 
-        // 如果已经处于开启状态，则需要先关闭
+        // 如果已经处于开启状态，则需要先清空已经高亮的内容
         if (this.isSearching) {
-            this.close(vditor);
+            this.clearResults(vditor);
         }
 
         // 设置当前状态和当前搜索文本
@@ -98,8 +98,29 @@ export class Search {
         if (!this.isSearching) {
             return;
         }
-
         this.isSearching = false;
+
+        // 保存光标位置
+        vditor[vditor.currentMode].element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove();
+        });
+        insertHTML('<wbr>', vditor);
+        let wbr = vditor[vditor.currentMode].element.querySelector("wbr");
+        if (wbr.nextSibling?.textContent === "") {
+            wbr.parentNode.removeChild(wbr.nextSibling);
+        }
+
+        // 清除result的内容及其高亮
+        this.clearResults(vditor);
+
+        // 将光标设置到<wbr>的位置
+        setRangeByWbr(vditor[vditor.currentMode].element, getEditorRange(vditor));
+    }
+
+    /**
+     * 清空搜索结果及其高亮
+     */
+    private clearResults(vditor: IVditor) :void {
         const nodeList =  [...this.searchResults];
         while (nodeList.length) {
             const node = nodeList.shift();
@@ -119,6 +140,7 @@ export class Search {
                 node.parentNode.insertBefore(span2, node);
                 node.parentNode.removeChild(node);
                 nodeList.unshift(span2, span1);
+                wbr.remove();
                 continue;
             }
             // 如果前面的节点是文本节点，则将当前节点的内容添加到前面的文本节点中
@@ -141,6 +163,9 @@ export class Search {
             // 删除当前节点
             node.parentNode.removeChild(node);
         }
+
+        this.searchResults = [];
+        this.pos = -1;
     }
 
     /**
