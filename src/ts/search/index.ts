@@ -361,7 +361,8 @@ export class Search {
                     element.tagName === "CODE" && element.getAttribute("data-marker") === "`" || // 内联代码
                     element.tagName === "CODE" && element.getAttribute("data-type") === "math-inline" || // 内联公式编辑区域
                     element.tagName === "CODE" && element.getAttribute("data-type") === "math-block" || // 公式块编辑区域
-                    element.tagName === "SPAN" && element.classList.contains("katex-html")  // 内联公式，公式块的渲染区域
+                    element.tagName === "SPAN" && element.classList.contains("katex-html") || // 内联公式，公式块的渲染区域
+                    element.tagName === "CODE" && element.getAttribute("data-type") === "yaml-front-matter" // front matter编辑区域
                     ) {
                     continue;
                 }
