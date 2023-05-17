@@ -853,6 +853,14 @@ interface ISearch {
     close(vditor: IVditor) :void;
     next(vditor: IVditor) :void;
     prev(vditor: IVditor) :void;
-    replace(vditor: IVditor, newText: string): void;
+    replace(vditor: IVditor, newText: string, focus: boolean): void;
     replaceAll(vditor: IVditor, newText: string): void;
+    setIgnoreCase(ignoreCase: boolean): void;
+    setMatchWholeWord(matchWholeWord: boolean): void;
+    getSearchCounter(): ISearchCounter;
+}
+
+interface ISearchCounter {
+    current : number;
+    total : number;
 }

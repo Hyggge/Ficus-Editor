@@ -199,20 +199,26 @@ export class Search {
 
     /** 
      * 设置是否忽略大小写
+     * @param ignoreCase    值为true表示忽略大小写
      */
     public setIgnoreCase(ignoreCase: boolean) :void {
         this.ignoreCase = ignoreCase;
     }
 
     /**
+     *
      * 设置是否全词匹配
+     * @param matchWholeWord    值为true表示全词匹配
      */
     public setMatchWholeWord(matchWholeWord: boolean) :void {
         this.matchWholeWord = matchWholeWord;
     }
 
     /**
-     * 单个替换
+     * 替换pos所指向的node的内容
+     * @param vditor
+     * @param newText   替换后的内容
+     * @param focus     是否跳转到下一个可以被替换的node
      */
     public replace(vditor: IVditor, newText: string, focus: boolean = false) :void {
         if (!this.isSearching || this.searchResults.length === 0) {
@@ -285,6 +291,8 @@ export class Search {
 
     /**
      * 全部替换
+     * @param vditor
+     * @param newText   替换后的内容
      */
     public replaceAll(vditor: IVditor, newText: string) :void {
         if (!this.isSearching || this.searchResults.length === 0 || newText === this.searchText) {
@@ -294,6 +302,17 @@ export class Search {
         const num = this.searchResults.length;
         for (let i = 0; i < num; i++) {
             this.replace(vditor, newText, false);
+        }
+    }
+
+    /**
+     * 获取当前搜索结果的总数和当前搜索结果的位置
+     * @returns ISearchCounter对象
+     */
+    public getSearchCounter() :ISearchCounter {
+        return {
+            current: this.pos + 1,
+            total: this.searchResults.length
         }
     }
 
