@@ -847,8 +847,8 @@ interface ICommentsData {
 }
 
 interface ISearch {
-    isSearching: boolean;
-    searchText: string;
+    readonly isSearching: boolean;
+    readonly searchText: string;
     run(vditor: IVditor, searchText: string, focus: boolean): void;
     close(vditor: IVditor) :void;
     next(vditor: IVditor) :void;
