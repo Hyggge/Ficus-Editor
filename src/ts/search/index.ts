@@ -41,6 +41,8 @@ export class Search {
         if (this.isSearching) {
             this.clearResults(vditor);
         }
+        // 合并连续的文本节点
+        this.mergeTextNodes(vditor);
 
         // 设置当前状态和当前搜索文本
         this.isSearching = true;
@@ -143,23 +145,25 @@ export class Search {
                 wbr.remove();
                 continue;
             }
-            // 如果前面的节点是文本节点，则将当前节点的内容添加到前面的文本节点中
-            if (node.previousSibling?.nodeType === 3) {
-                node.previousSibling.textContent += node.textContent;
-                // 如果后面的节点也是文本节点，则将后面的文本节点的内容添加到前面的文本节点中，并删除后面的文本节点
-                if (node.nextSibling?.nodeType === 3) {
-                    node.previousSibling.textContent += node.nextSibling.textContent;
-                    node.parentNode.removeChild(node.nextSibling);
-                }
-            } 
-            // 如果后面的节点是文本节点，则将当前节点的内容添加到后面的文本节点中
-            else if (node.nextSibling?.nodeType === 3) {
-                node.nextSibling.textContent = node.textContent + node.nextSibling.textContent;
-            } 
-            // 如果前后的节点都不是文本节点，则在当前节点前面插入一个文本节点
-            else {
-                node.parentNode.insertBefore(document.createTextNode(node.textContent), node);
-            }
+            // // 如果前面的节点是文本节点，则将当前节点的内容添加到前面的文本节点中
+            // if (node.previousSibling?.nodeType === 3) {
+            //     node.previousSibling.textContent += node.textContent;
+            //     // 如果后面的节点也是文本节点，则将后面的文本节点的内容添加到前面的文本节点中，并删除后面的文本节点
+            //     if (node.nextSibling?.nodeType === 3) {
+            //         node.previousSibling.textContent += node.nextSibling.textContent;
+            //         node.parentNode.removeChild(node.nextSibling);
+            //     }
+            // }
+            // // 如果后面的节点是文本节点，则将当前节点的内容添加到后面的文本节点中
+            // else if (node.nextSibling?.nodeType === 3) {
+            //     node.nextSibling.textContent = node.textContent + node.nextSibling.textContent;
+            // }
+            // // 如果前后的节点都不是文本节点，则在当前节点前面插入一个文本节点
+            // else {
+            //     node.parentNode.insertBefore(document.createTextNode(node.textContent), node);
+            // }
+
+            node.parentNode.insertBefore(document.createTextNode(node.textContent), node);
             // 删除当前节点
             node.parentNode.removeChild(node);
         }
@@ -372,6 +376,25 @@ export class Search {
 
         console.log(result)
         return result;
+    }
+
+    /**
+     * 合并相邻的文本节点
+     */
+    private mergeTextNodes(vditor: IVditor) :void {
+        const nodeList = Array.from(vditor[vditor.currentMode].element.childNodes);
+        while (nodeList.length) {
+            let node = nodeList.shift();
+            if (node.nodeType === node.TEXT_NODE) {
+                let prevNode = node.previousSibling;
+                if (prevNode && prevNode.nodeType === 3) {
+                    prevNode.textContent += node.textContent;
+                    node.parentNode.removeChild(node);
+                }
+            } else {
+                nodeList.unshift(...Array.from(node.childNodes));
+            }
+        }
     }
 
     /**
