@@ -32,6 +32,7 @@ import {
 import {afterRenderEvent} from "./afterRenderEvent";
 import {removeBlockElement} from "./processKeydown";
 import {renderToc} from "../util/toc";
+import { removeHeading, setHeading } from "./setHeading";
 
 export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
     clearTimeout(vditor.wysiwyg.hlToolbarTimeoutId);
@@ -705,37 +706,97 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         } else {
             blockRenderElement = undefined;
         }
+
+        // heading popover
         if (headingElement) {
             vditor.wysiwyg.popover.innerHTML = "";
 
-            const inputWrap = document.createElement("span");
-            inputWrap.setAttribute("aria-label", "ID" + "<" + updateHotkeyTip("⌥Enter") + ">");
-            inputWrap.className = "vditor-tooltipped vditor-tooltipped__n";
-            const input = document.createElement("input");
-            inputWrap.appendChild(input);
-            input.className = "vditor-input";
-            input.setAttribute("placeholder", "ID" + "<" + updateHotkeyTip("⌥Enter") + ">");
-            input.style.width = "120px";
-            input.value = headingElement.getAttribute("data-id") || "";
-            input.oninput = () => {
-                headingElement.setAttribute("data-id", input.value);
-            };
-            input.onkeydown = (event) => {
-                if (event.isComposing) {
-                    return;
-                }
-                if (removeBlockElement(vditor, event)) {
-                    return;
-                }
-                if (focusToElement(event, range)) {
-                    return;
+            // 标题级别增大
+            const plusElement = document.createElement("button");
+            plusElement.setAttribute("type", "button");
+            plusElement.setAttribute("data-type", "heading-plus");
+            plusElement.setAttribute("aria-label", "标题增大");
+            plusElement.innerHTML = '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>';
+            plusElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            plusElement.onclick = () => {
+                const range = getEditorRange(vditor);
+                let curHeading = hasClosestByHeadings(range.startContainer) as HTMLElement;
+                if (curHeading) {
+                    const index = parseInt(curHeading.tagName.substr(1), 10) - 1;
+                    if (index > 0) {
+                        setHeading(vditor, `h${index}`); // 在这个函数中已经保存了光标位置
+                        afterRenderEvent(vditor);
+                    }
                 }
             };
 
-            genUp(range, headingElement, vditor);
-            genDown(range, headingElement, vditor);
-            genClose(headingElement, vditor);
-            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inputWrap);
+            // 标题级别减小
+            const minusElement = document.createElement("button");
+            minusElement.setAttribute("type", "button");
+            minusElement.setAttribute("data-type", "heading-minus");
+            minusElement.setAttribute("aria-label", "标题减小");
+            minusElement.innerHTML = '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>';
+            minusElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            minusElement.onclick = () => {
+                const range = getEditorRange(vditor);
+                let curHeading = hasClosestByHeadings(range.startContainer) as HTMLElement;
+                if (curHeading) {
+                    const index = parseInt(curHeading.tagName.substr(1), 10) + 1;
+                    if (index < 7) {
+                        setHeading(vditor, `h${index}`);
+                        afterRenderEvent(vditor);
+                    }
+                }
+            }
+
+            // 选择标题级别
+            const selectElement = document.createElement("span");
+            const selectButton = document.createElement("button");
+            const selectPannel = document.createElement("div");
+            selectButton.setAttribute("type", "button");
+            selectButton.setAttribute("data-type", "heading-select");
+            selectButton.setAttribute("aria-label", "标题级别选择");
+            selectButton.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            selectButton.innerHTML = '<svg><use xlink:href="#vditor-icon-headings"></use></svg>';
+            selectButton.onclick = () => {
+                range.insertNode(document.createElement("wbr"));
+                selectPannel.style.display = "block";
+                setRangeByWbr(vditor.wysiwyg.element, range);
+            }
+            selectPannel.className = "vditor-hint vditor-panel--arrow";
+            selectPannel.style.left = "50px";
+            selectPannel.innerHTML = `<button data-tag="h1" data-value="# ">${window.VditorI18n.heading1} </button>
+                                    <button data-tag="h2" data-value="## ">${window.VditorI18n.heading2} </button>
+                                    <button data-tag="h3" data-value="### ">${window.VditorI18n.heading3} </button>
+                                    <button data-tag="h4" data-value="#### ">${window.VditorI18n.heading4} </button>
+                                    <button data-tag="h5" data-value="##### ">${window.VditorI18n.heading5} </button>
+                                    <button data-tag="h6" data-value="###### ">${window.VditorI18n.heading6} </button>`;
+            for (let i = 0; i < 6; i++) {
+                const button = selectPannel.children[i] as HTMLElement;
+                button.onclick = () => {
+                    setHeading(vditor, button.getAttribute("data-tag"));
+                    afterRenderEvent(vditor);
+                    selectPannel.style.display = "none";
+                }
+            }
+            selectElement.appendChild(selectButton);
+            selectElement.appendChild(selectPannel);
+
+            // 清除标题
+            const clearElement = document.createElement("button");
+            clearElement.setAttribute("type", "button");
+            clearElement.setAttribute("data-type", "heading-clear");
+            clearElement.setAttribute("aria-label", "清除标题样式");
+            clearElement.innerHTML = '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>';
+            clearElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            clearElement.onclick = () => {
+                removeHeading(vditor);
+            }
+
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", plusElement);
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", minusElement);
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", selectElement);
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", clearElement);
             setPopoverPosition(vditor, headingElement);
         }
 
@@ -766,7 +827,8 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             const blockElement = hasClosestByAttribute(typeElement, "data-block", "0");
             if (
                 blockElement &&
-                blockElement.parentElement.isEqualNode(vditor.wysiwyg.element)
+                blockElement.parentElement.isEqualNode(vditor.wysiwyg.element) &&
+                range.toString() !== ""
             ) {
                 vditor.wysiwyg.popover.innerHTML = "";
                 genUp(range, blockElement, vditor);
