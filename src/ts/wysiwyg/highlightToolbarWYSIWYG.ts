@@ -26,6 +26,7 @@ import {
 } from "../util/hasClosestByHeadings";
 import {processCodeRender} from "../util/processCode";
 import {
+    getCursorPosition,
     getEditorRange,
     selectIsEditor,
     setRangeByWbr,
@@ -152,7 +153,8 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         }
         const tableElement = hasClosestByMatchTag(typeElement, "TABLE") as HTMLTableElement;
         const headingElement = hasClosestByHeadings(typeElement) as HTMLElement;
-        if (hasClosestByMatchTag(typeElement, "CODE")) {
+        const codeElement = hasClosestByMatchTag(typeElement, "CODE");
+        if (codeElement) {
             if (hasClosestByMatchTag(typeElement, "PRE")) {
                 disableToolbar(vditor.toolbar.elements, [
                     "headings",
@@ -211,16 +213,16 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
 
         // quote popover
         const blockquoteElement = hasClosestByTag(typeElement, "BLOCKQUOTE") as HTMLTableElement;
-        if (blockquoteElement) {
-            vditor.wysiwyg.popover.innerHTML = "";
-            genUp(range, blockquoteElement, vditor);
-            genDown(range, blockquoteElement, vditor);
-            genClose(blockquoteElement, vditor);
-            setPopoverPosition(vditor, blockquoteElement);
-        }
+        // if (blockquoteElement) {
+        //     vditor.wysiwyg.popover.innerHTML = "";
+        //     genUp(range, blockquoteElement, vditor);
+        //     genDown(range, blockquoteElement, vditor);
+        //     genClose(blockquoteElement, vditor);
+        //     setPopoverPosition(vditor, blockquoteElement);
+        // }
 
         // list item popover
-        if (liElement) {
+        if (liElement && range.toString() === "") {
             vditor.wysiwyg.popover.innerHTML = "";
 
             // 列表反向缩进
@@ -249,6 +251,7 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             vditor.wysiwyg.popover.insertAdjacentElement("beforeend", outdentElement);
             vditor.wysiwyg.popover.insertAdjacentElement("beforeend", indentElement);
             setPopoverPosition(vditor, liElement);
+            return;
         }
 
         // table popover
@@ -836,8 +839,9 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         }
 
         if (
-            !blockquoteElement &&
-            !liElement &&
+            // !blockquoteElement &&
+            // !liElement &&
+            !codeElement && // 代码块中不弹出工具框
             !tableElement &&
             !blockRenderElement &&
             !aElement &&
@@ -847,18 +851,89 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             !tocElement &&
             !imgElement
         ) {
+            console.log(typeElement)
             const blockElement = hasClosestByAttribute(typeElement, "data-block", "0");
             if (
-                blockElement &&
-                blockElement.parentElement.isEqualNode(vditor.wysiwyg.element) &&
-                range.toString() !== ""
+                blockElement && range.toString() !== "" 
+                // (blockElement.parentElement.isEqualNode(vditor.wysiwyg.element) || blockElement.tagName === "UL" || blockElement.tagName === "OL")
             ) {
                 vditor.wysiwyg.popover.innerHTML = "";
-                genUp(range, blockElement, vditor);
-                genDown(range, blockElement, vditor);
-                genClose(blockElement, vditor);
+                console.log('enter')
+                // 加粗
+                const boldElement = document.createElement("button");
+                boldElement.setAttribute("data-type", "bold");
+                boldElement.setAttribute("aria-label", "加粗");
+                boldElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                boldElement.innerHTML = '<svg><use xlink:href="#vditor-icon-bold"></use></svg>';
+                boldElement.onclick = () => {
+                    const button =  vditor.toolbar.elements["bold"].children[0] as HTMLElement;
+                    button.click();
+                }
 
-                setPopoverPosition(vditor, blockElement);
+                // 斜体
+                const italicElement = document.createElement("button");
+                italicElement.setAttribute("data-type", "italic");
+                italicElement.setAttribute("aria-label", "斜体");
+                italicElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                italicElement.innerHTML = '<svg><use xlink:href="#vditor-icon-italic"></use></svg>';
+                italicElement.onclick = () => {
+                    const button =  vditor.toolbar.elements["italic"].children[0] as HTMLElement;
+                    button.click();
+                }
+
+                // 删除线
+                const strikeElement = document.createElement("button");
+                strikeElement.setAttribute("data-type", "strike");
+                strikeElement.setAttribute("aria-label", "删除线");
+                strikeElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                strikeElement.innerHTML = '<svg><use xlink:href="#vditor-icon-strike"></use></svg>';
+                strikeElement.onclick = () => {
+                    const button =  vditor.toolbar.elements["strike"].children[0] as HTMLElement;
+                    button.click();
+                }
+
+                // 行内代码
+                const inlineCodeElement = document.createElement("button");
+                inlineCodeElement.setAttribute("data-type", "inline-code");
+                inlineCodeElement.setAttribute("aria-label", "行内代码");
+                inlineCodeElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                inlineCodeElement.innerHTML = '<svg><use xlink:href="#vditor-icon-code"></use></svg>';
+                inlineCodeElement.onclick = () => {
+                    const button =  vditor.toolbar.elements["inline-code"].children[0] as HTMLElement;
+                    button.click();
+                }
+
+                // 行内数学公式
+                const inlineMathElement = document.createElement("button");
+                inlineMathElement.setAttribute("data-type", "inline-math");
+                inlineMathElement.setAttribute("aria-label", "行内数学公式");
+                inlineMathElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                inlineMathElement.innerHTML = '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>';
+                inlineMathElement.onclick = () => {
+                    const button =  vditor.toolbar.elements["inline-math"].children[0] as HTMLElement;
+                    button.click();
+                }
+
+                // 清除样式
+                const clearElement = document.createElement("button");
+                clearElement.setAttribute("data-type", "clear");
+                clearElement.setAttribute("aria-label", "清除样式");
+                clearElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+                clearElement.innerHTML = '<svg><use xlink:href="#vditor-icon-emoji"></use></svg>';
+                clearElement.onclick = () => {
+                    document.execCommand("removeFormat");
+                    console.log(range.startContainer)
+                    console.log(range.endContainer)
+                }
+
+
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", boldElement);
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", italicElement);
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", strikeElement);
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inlineCodeElement);
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inlineMathElement);
+                vditor.wysiwyg.popover.insertAdjacentElement("beforeend", clearElement);
+                setPopoverPositionByCursorPos(vditor);
             } else {
                 vditor.wysiwyg.popover.style.display = "none";
             }
@@ -893,6 +968,20 @@ const setPopoverPosition = (vditor: IVditor, element: HTMLElement) => {
         Math.min(targetElement.offsetLeft, vditor.wysiwyg.element.clientWidth - vditor.wysiwyg.popover.clientWidth) + "px";
     vditor.wysiwyg.popover.setAttribute("data-top", (targetElement.offsetTop - 32).toString());
 };
+
+
+const setPopoverPositionByCursorPos = (vditor: IVditor) => {
+    const position = getCursorPosition(vditor[vditor.currentMode].element)
+    console.log(position)
+    vditor.wysiwyg.popover.style.left = "0";
+    vditor.wysiwyg.popover.style.display = "block";
+    vditor.wysiwyg.popover.style.top =
+        Math.max(-32, position.top + vditor.wysiwyg.element.scrollTop - 32 - vditor.wysiwyg.element.scrollTop) + "px";
+    vditor.wysiwyg.popover.style.left =
+        Math.min(position.left - 10, vditor.wysiwyg.element.clientWidth - vditor.wysiwyg.popover.clientWidth) + "px";
+    vditor.wysiwyg.popover.setAttribute("data-top", (position.top + vditor.wysiwyg.element.scrollTop - 32).toString());
+
+}
 
 export const genLinkRefPopover = (vditor: IVditor, linkRefElement: HTMLElement, range = getSelection().getRangeAt(0)) => {
     vditor.wysiwyg.popover.innerHTML = "";
