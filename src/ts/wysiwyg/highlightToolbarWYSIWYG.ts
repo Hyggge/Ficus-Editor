@@ -1132,7 +1132,6 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
     input2Wrap.appendChild(input2);
     input2.className = "vditor-input";
     input2.setAttribute("placeholder", window.VditorI18n.tooltipText);
-    input2.style.width = "60px";
     input2.value = aElement.getAttribute("title") || "";
     input2.oninput = () => {
         updateA();
@@ -1150,7 +1149,7 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
     genClose(aElement, vditor);
     vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inputWrap);
     vditor.wysiwyg.popover.insertAdjacentElement("beforeend", input1Wrap);
-    vditor.wysiwyg.popover.insertAdjacentElement("beforeend", input2Wrap);
+    // vditor.wysiwyg.popover.insertAdjacentElement("beforeend", input2Wrap);
     setPopoverPosition(vditor, aElement);
 };
 
@@ -1195,7 +1194,6 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     altWrap.appendChild(alt);
     alt.className = "vditor-input";
     alt.setAttribute("placeholder", window.VditorI18n.alternateText);
-    alt.style.width = "52px";
     alt.value = imgElement.getAttribute("alt") || "";
     alt.oninput = () => {
         updateImg();
@@ -1221,7 +1219,7 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     genClose(imgElement, vditor);
     vditor.wysiwyg.popover.insertAdjacentElement("beforeend", inputWrap);
     vditor.wysiwyg.popover.insertAdjacentElement("beforeend", altWrap);
-    vditor.wysiwyg.popover.insertAdjacentElement("beforeend", titleWrap);
+    // vditor.wysiwyg.popover.insertAdjacentElement("beforeend", titleWrap);
 
     setPopoverPosition(vditor, imgElement);
 };
