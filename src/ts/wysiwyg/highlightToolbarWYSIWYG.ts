@@ -11,6 +11,8 @@ import {
     insertColumn,
     insertRow,
     insertRowAbove,
+    listIndent,
+    listOutdent,
     setTableAlign,
 } from "../util/fixBrowserBehavior";
 import {
@@ -221,10 +223,31 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         if (liElement) {
             vditor.wysiwyg.popover.innerHTML = "";
 
-            genUp(range, liElement, vditor);
-            genDown(range, liElement, vditor);
-            genClose(liElement, vditor);
+            // 列表反向缩进
+            const outdentElement = document.createElement("button");
+            outdentElement.setAttribute("type", "button");
+            outdentElement.setAttribute("data-type", "outdent");
+            outdentElement.setAttribute("aria-label", "列表反向缩进");
+            outdentElement.innerHTML = '<svg><use xlink:href="#vditor-icon-outdent"></use></svg>';
+            outdentElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            outdentElement.onclick = () => {
+                listOutdent(vditor, liElement, range, liElement.parentElement);
+            }
 
+            // 列表正向缩进
+            const indentElement = document.createElement("button");
+            indentElement.setAttribute("type", "button");
+            indentElement.setAttribute("data-type", "indent");
+            indentElement.setAttribute("aria-label", "列表正向缩进");
+            indentElement.innerHTML = '<svg><use xlink:href="#vditor-icon-indent"></use></svg>';
+            indentElement.className = "vditor-icon vditor-tooltipped vditor-tooltipped__n";
+            indentElement.onclick = () => {
+                listIndent(vditor, liElement, range);
+            }
+
+
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", outdentElement);
+            vditor.wysiwyg.popover.insertAdjacentElement("beforeend", indentElement);
             setPopoverPosition(vditor, liElement);
         }
 
