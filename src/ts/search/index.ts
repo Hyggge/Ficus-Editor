@@ -230,7 +230,10 @@ export class Search {
         }
 
         // 如果newText仍然匹配searchText，则只把node文本替换为newText即可
-        const regExp = new RegExp(this.matchWholeWord ? `\\b${this.searchText}\\b` : this.searchText,
+        const pattern = /[\[\(\$\^\.\]\*\\\?\+\{\}\\|\)]/gi
+        const newSearchText = this.searchText.replace(pattern, key => "\\" + key);
+        console.log(newSearchText)
+        const regExp = new RegExp(this.matchWholeWord ? `\\b${newSearchText}\\b` : newSearchText,
                                   this.ignoreCase ? "i" : "");
         if (newText.match(regExp)) {
             this.searchResults[this.pos].textContent = newText;
@@ -334,7 +337,9 @@ export class Search {
 
         const result: Node[] = [];
         const nodeList = Array.from(vditor[vditor.currentMode].element.childNodes);
-        const regExp = new RegExp(this.matchWholeWord ? `\\b${this.searchText}\\b` : this.searchText, 
+        const pattern = /[\[\(\$\^\.\]\*\\\?\+\{\}\\|\)]/gi
+        const newSearchText = this.searchText.replace(pattern, key => "\\" + key);
+        const regExp = new RegExp(this.matchWholeWord ? `\\b${newSearchText}\\b` : newSearchText,
                                   this.ignoreCase ? "i" : "");
                                   
         while(nodeList.length) {
