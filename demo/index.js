@@ -211,3 +211,11 @@ document.getElementById("autoSpace").addEventListener("click", () => {
 document.getElementById("noAutoSpace").addEventListener("click", () => {
     window.vditor.setAutoSpace(false)
 })
+
+document.getElementById("autoFixTermTypo").addEventListener("click", () => {
+    window.vditor.setAutoFixTermTypo(true)
+})
+
+document.getElementById("noAutoFixTermTypo").addEventListener("click", () => {
+    window.vditor.setAutoFixTermTypo(false)
+})
