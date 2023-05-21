@@ -203,3 +203,11 @@ document.getElementById("displayLineNumber").addEventListener("click", () => {
 document.getElementById("hideLineNumber").addEventListener("click", () => {
     window.vditor.setCodeBlockLineNumber(false)
 })
+
+document.getElementById("autoSpace").addEventListener("click", () => {
+    window.vditor.setAutoSpace(true)
+})
+
+document.getElementById("noAutoSpace").addEventListener("click", () => {
+    window.vditor.setAutoSpace(false)
+})

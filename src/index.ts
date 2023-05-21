@@ -692,6 +692,21 @@ class Vditor extends VditorMethod {
         }
     }
 
+    /* 设置sv模式下自动加空格 */
+    public setAutoSpace(enable: boolean) {
+        if (this.vditor.options.preview.markdown.autoSpace === enable) {
+            return;
+        }
+        // 在options中设置
+        this.vditor.options.preview.markdown.autoSpace = enable;
+        this.vditor.lute.SetAutoSpace(enable);
+        // 在sv模式下重新渲染
+        if (this.vditor.currentMode === "sv") {
+            console.log('hello')
+            this.vditor.preview.render(this.vditor);
+        }
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
