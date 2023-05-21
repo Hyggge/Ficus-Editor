@@ -672,6 +672,26 @@ class Vditor extends VditorMethod {
         }
     }
 
+    /* 设置代码块行号的显示和隐藏 */
+    public setCodeBlockLineNumber(enable: boolean) {
+        if (this.vditor.options.preview.hljs.lineNumber === enable) {
+            return;
+        }
+        // 在options中设置
+        this.vditor.options.preview.hljs.lineNumber = enable;
+        // 重新渲染已有的代码块
+        if (this.vditor.currentMode === "wysiwyg") {
+            const editorElement = this.vditor.wysiwyg.element;
+            editorElement.innerHTML = this.vditor.lute.Md2VditorDOM(getMarkdown(this.vditor));
+            editorElement.querySelectorAll(".vditor-wysiwyg__preview[data-render='2']").forEach((item: HTMLElement) => {
+                processCodeRender(item, this.vditor);
+                item.previousElementSibling.setAttribute("style", "display:none");
+            });
+        } else if (this.vditor.currentMode === "sv") {
+            this.vditor.preview.render(this.vditor);
+        }
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,

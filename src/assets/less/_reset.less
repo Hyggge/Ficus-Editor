@@ -352,8 +352,8 @@
     &__rows {
       position: absolute;
       pointer-events: none;
-      top: 0.5em;
-      left: 0;
+      top: 20px;
+      left: 0em;
       width: 3em; /* works for line-numbers below 1000 lines */
       user-select: none;
       counter-reset: linenumber;
@@ -363,6 +363,7 @@
         display: block;
 
         &::before {
+          line-height: 24px;
           counter-increment: linenumber;
           content: counter(linenumber);
           color: rgba(158, 150, 150, 0.38);

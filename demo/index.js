@@ -195,3 +195,11 @@ document.getElementById("changeKaTex").addEventListener("click", () => {
 document.getElementById("changeMathJax").addEventListener("click", () => {
     window.vditor.changeLatexEngine("MathJax")
 })
+
+document.getElementById("displayLineNumber").addEventListener("click", () => {
+    window.vditor.setCodeBlockLineNumber(true)
+})
+
+document.getElementById("hideLineNumber").addEventListener("click", () => {
+    window.vditor.setCodeBlockLineNumber(false)
+})
