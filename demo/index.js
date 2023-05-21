@@ -185,3 +185,13 @@ replaceAllButton.addEventListener("click", () => {
     const text = input.value;
     window.vditor.vditor.search.replaceAll(window.vditor.vditor, text);
 })
+
+
+document.getElementById("changeKaTex").addEventListener("click", () => {
+    window.vditor.changeLatexEngine("KaTex")
+})
+
+
+document.getElementById("changeMathJax").addEventListener("click", () => {
+    window.vditor.changeLatexEngine("MathJax")
+})

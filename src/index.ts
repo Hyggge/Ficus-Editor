@@ -648,6 +648,30 @@ class Vditor extends VditorMethod {
         }
     }
 
+    /* 切换Latex引擎 */
+    public changeLatexEngine(engine: string) {
+        if (engine === this.vditor.options.preview.math.engine) {
+            return;
+        }
+        // 在options中切换引擎
+        if (engine === "KaTex") {
+            this.vditor.options.preview.math.engine = "KaTeX";
+        } else {
+            this.vditor.options.preview.math.engine = "MathJax";
+        }
+        // 重新渲染已有的数学公式
+        if (this.vditor.currentMode === "wysiwyg") {
+            const editorElement = this.vditor.wysiwyg.element;
+            editorElement.innerHTML = this.vditor.lute.Md2VditorDOM(getMarkdown(this.vditor));
+            editorElement.querySelectorAll(".vditor-wysiwyg__preview[data-render='2']").forEach((item: HTMLElement) => {
+                processCodeRender(item, this.vditor);
+                item.previousElementSibling.setAttribute("style", "display:none");
+            });
+        } else if (this.vditor.currentMode === "sv") {
+            this.vditor.preview.render(this.vditor);
+        }
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
