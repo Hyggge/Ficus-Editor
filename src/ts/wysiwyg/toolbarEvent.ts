@@ -250,6 +250,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
         } else if (commandName === "inline-code") {
             if (range.toString() === "") {
                 const node = document.createElement("code");
+                node.setAttribute("data-marker", "`")
                 node.textContent = Constants.ZWSP;
                 range.insertNode(node);
                 range.setStart(node.firstChild, 1);
@@ -257,6 +258,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 setSelectionFocus(range);
             } else if (range.startContainer.nodeType === 3) {
                 const node = document.createElement("code");
+                node.setAttribute("data-marker", "`")
                 range.surroundContents(node);
                 range.insertNode(node);
                 setSelectionFocus(range);
