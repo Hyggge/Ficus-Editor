@@ -129,7 +129,7 @@ const initVditor = (language) => {
                     },
                 }],
         },
-        tab: '\t',
+        tab: '    ',
         upload: {
             accept: 'image/*,.mp3, .wav, .rar',
             token: 'test',
@@ -188,12 +188,12 @@ replaceAllButton.addEventListener("click", () => {
 
 
 document.getElementById("changeKaTex").addEventListener("click", () => {
-    window.vditor.changeLatexEngine("KaTex")
+    window.vditor.setLatexEngine("KaTex")
 })
 
 
 document.getElementById("changeMathJax").addEventListener("click", () => {
-    window.vditor.changeLatexEngine("MathJax")
+    window.vditor.setLatexEngine("MathJax")
 })
 
 document.getElementById("displayLineNumber").addEventListener("click", () => {

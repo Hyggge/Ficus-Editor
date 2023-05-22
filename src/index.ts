@@ -662,7 +662,7 @@ class Vditor extends VditorMethod {
     }
 
     /* 切换Latex引擎 */
-    public changeLatexEngine(engine: string) {
+    public setLatexEngine(engine: string) {
         if (engine === this.vditor.options.preview.math.engine) {
             return;
         }
