@@ -219,3 +219,7 @@ document.getElementById("autoFixTermTypo").addEventListener("click", () => {
 document.getElementById("noAutoFixTermTypo").addEventListener("click", () => {
     window.vditor.setAutoFixTermTypo(false)
 })
+
+document.getElementById("changeCodeTheme").addEventListener("click", () => {
+    window.vditor.setCodeTheme("base16/solarized-light")
+})

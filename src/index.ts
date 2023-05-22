@@ -117,6 +117,19 @@ class Vditor extends VditorMethod {
         return getMarkdown(this.vditor);
     }
 
+    /** 设置编辑器主题 */
+    public setContentTheme(contentTheme: string, contentThemePath?: string) {
+        this.vditor.options.preview.theme.current = contentTheme;
+        setContentTheme(contentTheme, contentThemePath || this.vditor.options.preview.theme.path);
+    }
+
+    /** 设置代码主题 */
+    public setCodeTheme(codeTheme: string) {
+        this.vditor.options.preview.hljs.style = codeTheme;
+        setCodeTheme(codeTheme, this.vditor.options.cdn);
+    }
+
+
     /** 获取编辑器当前编辑模式 */
     public getCurrentMode() {
         return this.vditor.currentMode;
