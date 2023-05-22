@@ -609,6 +609,15 @@ interface FicusHotkey {
 
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
+    /** 选中文字后的悬浮工具框 */
+    popoverToolbar?: {
+        bold: boolean;
+        italic: boolean;
+        strike: boolean;
+        inlineCode: boolean;
+        inlineMath: boolean;
+        clear: boolean;
+    };
     /** ficus定义的快捷键, 具有最高优先级 **/
     ficusHotkey?: FicusHotkey[];
     /** 是否启用撤销功能 **/

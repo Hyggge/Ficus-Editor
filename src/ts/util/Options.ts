@@ -4,6 +4,14 @@ import {merge} from "./merge";
 export class Options {
     public options: IOptions;
     private defaultOptions: IOptions = {
+        popoverToolbar: {
+            bold: true,
+            italic: true,
+            strike: true,
+            inlineCode: true,
+            inlineMath: true,
+            clear: true
+        },
         ficusHotkey: [],
         undoEnable: false,
         rtl: false,

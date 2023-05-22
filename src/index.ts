@@ -727,7 +727,7 @@ class Vditor extends VditorMethod {
         }
     }
 
-    // 设置自动矫正术语
+    /** 设置自动矫正术语 */
     public setAutoFixTermTypo(enable: boolean) {
         if (this.vditor.options.preview.markdown.fixTermTypo === enable) {
             return;
@@ -750,6 +750,13 @@ class Vditor extends VditorMethod {
                 enableInput: true,
             });
         }
+    }
+
+    /** 设置悬浮工具框的内容 */
+    public setPopoverToolbar(options: IOptions["popoverToolbar"]) {
+        this.vditor.options.popoverToolbar = options;
+        this.vditor.wysiwyg.popover.innerHTML = "";
+        this.vditor.wysiwyg.popover.style.display = "none";
     }
 
     private init(id: HTMLElement, mergedOptions: IOptions) {

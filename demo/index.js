@@ -223,3 +223,14 @@ document.getElementById("noAutoFixTermTypo").addEventListener("click", () => {
 document.getElementById("changeCodeTheme").addEventListener("click", () => {
     window.vditor.setCodeTheme("base16/solarized-light")
 })
+
+document.getElementById("setPopoverToolbar").addEventListener("click", () => {
+    window.vditor.setPopoverToolbar({
+        bold: true,
+        italic: true,
+        strike: true,
+        inlineCode: false,
+        inlineMath: true,
+        clear: true
+    })
+})
