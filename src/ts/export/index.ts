@@ -81,6 +81,9 @@ export const exportHTML = (vditor: IVditor, autoDownload: boolean = true) => {
     Vditor.abcRender(previewElement, '${Constants.CDN}');
     Vditor.mediaRender(previewElement);
     Vditor.speechRender(previewElement);
+    document.querySelectorAll('.vditor-reset code').forEach((code) => {
+        code.style['max-height'] = 'none';
+    })
 </script>
 <script src="${Constants.CDN}/dist/js/icons/${vditor.options.icon}.js"></script></body></html>`;
     if(autoDownload) download(vditor, html, "demo.html");
