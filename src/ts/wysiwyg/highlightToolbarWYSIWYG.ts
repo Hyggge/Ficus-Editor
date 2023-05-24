@@ -640,9 +640,9 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             });
         if (blockRenderElement && isBlock) {
             vditor.wysiwyg.popover.innerHTML = "";
-            genUp(range, blockRenderElement, vditor);
-            genDown(range, blockRenderElement, vditor);
-            genClose(blockRenderElement, vditor);
+            // genUp(range, blockRenderElement, vditor);
+            // genDown(range, blockRenderElement, vditor);
+            // genClose(blockRenderElement, vditor);
 
             if (blockRenderElement.getAttribute("data-type") === "code-block") {
                 const languageWrap = document.createElement("span");
@@ -728,7 +728,9 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
                 };
                 vditor.wysiwyg.popover.insertAdjacentElement("beforeend", languageWrap);
             }
-            setPopoverPosition(vditor, blockRenderElement);
+            if (vditor.wysiwyg.popover.innerHTML !== "") {
+                setPopoverPosition(vditor, blockRenderElement);
+            }
         } else {
             blockRenderElement = undefined;
         }
