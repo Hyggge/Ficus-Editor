@@ -91,6 +91,8 @@ const initVditor = (language) => {
             enable: true,
             type: 'text',
         },
+        after() {
+        },
         hint: {
             emojiPath: 'https://unpkg.com/ficus-editor/dist/images/emoji',
             emojiTail: '<a href="https://ld246.com/settings/function" target="_blank">设置常用表情</a>',
@@ -233,4 +235,12 @@ document.getElementById("setPopoverToolbar").addEventListener("click", () => {
         inlineMath: true,
         clear: true
     })
+})
+
+document.getElementById("displaySVPreview").addEventListener("click", () => {
+    window.vditor.setSVPreview(true)
+})
+
+document.getElementById("hideSVPreview").addEventListener("click", () => {
+    window.vditor.setSVPreview(false)
 })

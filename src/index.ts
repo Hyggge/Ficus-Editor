@@ -759,6 +759,17 @@ class Vditor extends VditorMethod {
         this.vditor.wysiwyg.popover.style.display = "none";
     }
 
+    /** SV模式下是否隐藏渲染区域 */
+    public setSVPreview(enable: boolean) {
+        if (enable) {
+            this.vditor.preview.element.setAttribute("style", "display: block;");
+            this.vditor.sv.element.setAttribute("style", "display: block;");
+        } else {
+            this.vditor.preview.element.setAttribute("style", "display: none;");
+            this.vditor.sv.element.setAttribute("style", "display: block; padding-right: 88px");
+        }
+    }
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
