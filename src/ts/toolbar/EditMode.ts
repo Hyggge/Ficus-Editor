@@ -106,9 +106,9 @@ export const setEditMode = (vditor: IVditor, type: string, event: Event | string
         vditor.wysiwyg.element.parentElement.style.display = "none";
         vditor.ir.element.parentElement.style.display = "none";
         if (vditor.options.preview.mode === "both") {
-            vditor.sv.element.style.display = "block";
+            vditor.sv.element.setAttribute("style", "display:block;");
         } else if (vditor.options.preview.mode === "editor") {
-            vditor.sv.element.style.display = "block";
+            vditor.sv.element.setAttribute("style", "display:block; padding-right: 88px;");
         }
 
         vditor.lute.SetVditorIR(false);

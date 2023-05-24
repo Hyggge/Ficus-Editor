@@ -246,9 +246,9 @@ document.getElementById("setPopoverToolbar").addEventListener("click", () => {
 })
 
 document.getElementById("displaySVPreview").addEventListener("click", () => {
-    window.vditor.setSVPreview(true)
+    window.vditor.setPreviewMode("both")
 })
 
 document.getElementById("hideSVPreview").addEventListener("click", () => {
-    window.vditor.setSVPreview(false)
+    window.vditor.setPreviewMode("editor")
 })
