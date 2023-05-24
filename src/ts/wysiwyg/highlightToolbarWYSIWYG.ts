@@ -1227,12 +1227,12 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         const matchingData: IHintData[] = [];
         const key = input1.value;
         const hints = vditor.options.hint.genLinkHint(key);
-        hints.forEach((item) => {
+        for (let i in hints) {
             matchingData.push({
-                html: item,
-                value: item,
+                html: hints[i],
+                value: hints[i],
             });
-        });
+        }
         vditor.hint.genHTML(matchingData, key, vditor);
         event.preventDefault();
     };
@@ -1312,12 +1312,12 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
         const matchingData: IHintData[] = [];
         const key = inputElement.value;
         const hints = vditor.options.hint.genLinkHint(key);
-        hints.forEach((item) => {
+        for (let i in hints) {
             matchingData.push({
-                html: item,
-                value: item,
+                html: hints[i],
+                value: hints[i],
             });
-        });
+        }
         vditor.hint.genHTML(matchingData, key, vditor);
         event.preventDefault();
     };
