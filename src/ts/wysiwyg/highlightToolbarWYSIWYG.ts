@@ -1214,6 +1214,29 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         }
         linkHotkey(vditor, aElement, event, input2);
     };
+    input1.onkeyup = (event) => {
+        if (
+            event.isComposing ||
+            event.key === "Enter" ||
+            event.key === "ArrowUp" ||
+            event.key === "Escape" ||
+            event.key === "ArrowDown"
+        ) {
+            return;
+        }
+        const matchingData: IHintData[] = [];
+        const key = input1.value;
+        const hints = vditor.options.hint.genLinkHint(key);
+        hints.forEach((item) => {
+            matchingData.push({
+                html: item,
+                value: item,
+            });
+        });
+        vditor.hint.genHTML(matchingData, key, vditor);
+        event.preventDefault();
+    };
+
 
     const input2Wrap = document.createElement("span");
     input2Wrap.setAttribute("aria-label", window.VditorI18n.tooltipText);
@@ -1275,6 +1298,28 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     };
     inputElement.onkeydown = (elementEvent) => {
         removeBlockElement(vditor, elementEvent);
+    };
+    inputElement.onkeyup = (event) => {
+        if (
+            event.isComposing ||
+            event.key === "Enter" ||
+            event.key === "ArrowUp" ||
+            event.key === "Escape" ||
+            event.key === "ArrowDown"
+        ) {
+            return;
+        }
+        const matchingData: IHintData[] = [];
+        const key = inputElement.value;
+        const hints = vditor.options.hint.genLinkHint(key);
+        hints.forEach((item) => {
+            matchingData.push({
+                html: item,
+                value: item,
+            });
+        });
+        vditor.hint.genHTML(matchingData, key, vditor);
+        event.preventDefault();
     };
 
     const altWrap = document.createElement("span");

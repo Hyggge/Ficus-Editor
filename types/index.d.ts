@@ -559,6 +559,9 @@ interface IHint {
     /** 表情图片地址。默认值: 'https://unpkg.com/vditor@${VDITOR_VERSION}/dist/images/emoji' */
     emojiPath?: string;
     extend?: IHintExtend[];
+    /** 链接地址、图片地址的提示 */
+    genLinkHint?(input: string): string[];
+
 }
 
 /** @link https://ld246.com/article/1549638745630#options-toolbarConfig */

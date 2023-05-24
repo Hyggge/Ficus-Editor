@@ -101,6 +101,14 @@ const initVditor = (language) => {
                 'j': 'https://unpkg.com/vditor@1.3.1/dist/images/emoji/j.png',
             },
             parse: false,
+            genLinkHint: (input) => {
+                // 具体生成hint列表的逻辑
+                // ...
+                return [
+                    input + '123',
+                    input + '456'
+                ]
+            },
             extend: [
                 {
                     key: '@',
