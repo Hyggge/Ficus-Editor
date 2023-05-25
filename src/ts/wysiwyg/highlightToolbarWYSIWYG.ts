@@ -1209,10 +1209,23 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         if (removeBlockElement(vditor, event)) {
             return;
         }
-        if (focusToElement(event, range)) {
+        // if (focusToElement(event, range)) {
+        //     return;
+        // }
+        // linkHotkey(vditor, aElement, event, input2);
+        if (event.isComposing) {
             return;
         }
-        linkHotkey(vditor, aElement, event, input2);
+        if (
+            event.key === "Escape" &&
+            vditor.hint.element.style.display === "block"
+            ) {
+                vditor.hint.element.style.display = "none";
+                event.preventDefault();
+                return;
+            }
+        vditor.hint.select(event, vditor);
+        focusToElement(event, range);
     };
     input1.onkeyup = async (event) => {
         if (
@@ -1225,12 +1238,12 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
             return;
         }
         const matchingData: IHintData[] = [];
-        const key = input1.value;
+        const key = input1.value.substring(0, input1.selectionStart);
         const hints = await vditor.options.hint.genLinkHint(key);
         for (let i in hints) {
             matchingData.push({
-                html: hints[i],
-                value: hints[i],
+                html: hints[i].trim(),
+                value: hints[i].trim(),
             });
         }
         vditor.hint.genHTML(matchingData, key, vditor);
@@ -1296,8 +1309,21 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     inputElement.oninput = () => {
         updateImg();
     };
-    inputElement.onkeydown = (elementEvent) => {
-        removeBlockElement(vditor, elementEvent);
+    inputElement.onkeydown = (event) => {
+        removeBlockElement(vditor, event);
+        if (event.isComposing) {
+            return;
+        }
+        if (
+            event.key === "Escape" &&
+            vditor.hint.element.style.display === "block"
+        ) {
+            vditor.hint.element.style.display = "none";
+            event.preventDefault();
+            return;
+        }
+        vditor.hint.select(event, vditor);
+        focusToElement(event, getEditorRange(vditor));
     };
     inputElement.onkeyup = async (event) => {
         if (
@@ -1310,12 +1336,12 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
             return;
         }
         const matchingData: IHintData[] = [];
-        const key = inputElement.value;
+        const key = inputElement.value.substring(0, inputElement.selectionStart);
         const hints = await vditor.options.hint.genLinkHint(key);
         for (let i in hints) {
             matchingData.push({
-                html: hints[i],
-                value: hints[i],
+                html: hints[i].trim(),
+                value: hints[i].trim(),
             });
         }
         vditor.hint.genHTML(matchingData, key, vditor);

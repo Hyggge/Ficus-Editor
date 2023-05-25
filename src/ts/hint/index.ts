@@ -217,8 +217,8 @@ export class Hint {
         const hints = await vditor.options.hint.genLinkHint(currentLineValue);
         for (let i in hints) {
             matchingData.push({
-                html: hints[i],
-                value: hints[i],
+                html: hints[i].trim(),
+                value: hints[i].trim(),
             });
         }
         this.lastIndex = 0;
