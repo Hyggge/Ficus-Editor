@@ -139,7 +139,41 @@ export class Hint {
             return;
         }
         let currentLineValue: string;
-        const range = getSelection().getRangeAt(0);
+        let range = getSelection().getRangeAt(0);
+
+        // 链接提示
+        const link = hasClosestByClassName(range.startContainer, "vditor-sv__marker--link");
+        if (link) {
+            // 合并link中所有的文本节点
+            insertHTML('<wbr>', vditor)
+            const textNodes = Array.from(link.childNodes);
+            for (let i = 1; i < textNodes.length; i++) {
+                const item = textNodes[i];
+                if (item.nodeType === 3 && item.previousSibling.nodeType === 3) {
+                    item.previousSibling.textContent += item.textContent;
+                    item.remove();
+                }
+            }
+            range.setStart(link.childNodes[0], 0);
+            setRangeByWbr(vditor.sv.element, range);
+
+            // 截取开头和光标位置之间的字符串
+            currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
+
+            // 构造提示列表
+            const matchingData: IHintData[] = [];
+            const hints = vditor.options.hint.genLinkHint(currentLineValue);
+            for (let i in hints) {
+                matchingData.push({
+                    html: hints[i],
+                    value: hints[i],
+                });
+            }
+            this.lastIndex = 0;
+            vditor.hint.genHTML(matchingData, currentLineValue, vditor);
+            return;
+        }
+
         // 截取开头和光标位置之间的字符串
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
         // 当前行
