@@ -1214,7 +1214,7 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         }
         linkHotkey(vditor, aElement, event, input2);
     };
-    input1.onkeyup = (event) => {
+    input1.onkeyup = async (event) => {
         if (
             event.isComposing ||
             event.key === "Enter" ||
@@ -1226,7 +1226,7 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         }
         const matchingData: IHintData[] = [];
         const key = input1.value;
-        const hints = vditor.options.hint.genLinkHint(key);
+        const hints = await vditor.options.hint.genLinkHint(key);
         for (let i in hints) {
             matchingData.push({
                 html: hints[i],
@@ -1299,7 +1299,7 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     inputElement.onkeydown = (elementEvent) => {
         removeBlockElement(vditor, elementEvent);
     };
-    inputElement.onkeyup = (event) => {
+    inputElement.onkeyup = async (event) => {
         if (
             event.isComposing ||
             event.key === "Enter" ||
@@ -1311,7 +1311,7 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
         }
         const matchingData: IHintData[] = [];
         const key = inputElement.value;
-        const hints = vditor.options.hint.genLinkHint(key);
+        const hints = await vditor.options.hint.genLinkHint(key);
         for (let i in hints) {
             matchingData.push({
                 html: hints[i],
