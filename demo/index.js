@@ -252,3 +252,11 @@ document.getElementById("displaySVPreview").addEventListener("click", () => {
 document.getElementById("hideSVPreview").addEventListener("click", () => {
     window.vditor.setPreviewMode("editor")
 })
+
+document.getElementById("editable").addEventListener("click", () => {
+    window.vditor.setEditable(true)
+})
+
+document.getElementById("unEditable").addEventListener("click", () => {
+    window.vditor.setEditable(false)
+})
