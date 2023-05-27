@@ -1164,7 +1164,11 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
         if (input.value.trim() !== "") {
             aElement.innerHTML = input.value;
         }
-        aElement.setAttribute("href", input1.value);
+        if (input1.value.search(/https?\:\/\//) === 0) {
+            aElement.setAttribute("href", input1.value);
+        } else {
+            aElement.setAttribute("href", "ficus://" + input1.value);
+        }
         aElement.setAttribute("title", input2.value);
         afterRenderEvent(vditor);
     };
@@ -1201,7 +1205,11 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
     input1Wrap.appendChild(input1);
     input1.className = "vditor-input";
     input1.setAttribute("placeholder", window.VditorI18n.link);
-    input1.value = aElement.getAttribute("href") || "";
+    if (aElement.getAttribute("href").indexOf("ficus://") === 0) {
+        input1.value = aElement.getAttribute("href").slice('ficus://'.length) || "";
+    } else {
+        input1.value = aElement.getAttribute("href") || "";
+    }
     input1.oninput = () => {
         updateA();
     };
