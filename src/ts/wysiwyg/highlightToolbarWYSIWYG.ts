@@ -1287,13 +1287,18 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
         imgElement = event.target as HTMLImageElement;
     }
     
-    if (imgElement.getAttribute("src").indexOf("ficus://") !== 0) {
+    if (imgElement.getAttribute("src").indexOf("ficus://") !== 0 &&
+        imgElement.getAttribute("src").search(/https?\:\/\//) !== 0) {
         imgElement.setAttribute("src", "ficus://" + imgElement.getAttribute("src"));
     }
 
     vditor.wysiwyg.popover.innerHTML = "";
     const updateImg = () => {
-        imgElement.setAttribute("src", "ficus://" + inputElement.value);
+        if (inputElement.value.search(/https?\:\/\//) === 0) {
+            imgElement.setAttribute("src", inputElement.value);
+        } else {
+            imgElement.setAttribute("src", "ficus://" + inputElement.value);
+        }
         imgElement.setAttribute("alt", alt.value);
         imgElement.setAttribute("title", title.value);
     };
@@ -1305,7 +1310,11 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
     inputWrap.appendChild(inputElement);
     inputElement.className = "vditor-input";
     inputElement.setAttribute("placeholder", window.VditorI18n.imageURL);
-    inputElement.value = imgElement.getAttribute("src").slice('ficus://'.length) || "";
+    if (imgElement.getAttribute("src").indexOf("ficus://") === 0) {
+        inputElement.value = imgElement.getAttribute("src").slice('ficus://'.length) || "";
+    } else {
+        inputElement.value = imgElement.getAttribute("src") || "";
+    }
     inputElement.oninput = () => {
         updateImg();
     };
