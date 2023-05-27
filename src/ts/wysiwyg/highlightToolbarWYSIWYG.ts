@@ -1,5 +1,5 @@
 import {Constants} from "../constants";
-import {disableToolbar} from "../toolbar/setToolbar";
+import {disableToolbar, hidePanel} from "../toolbar/setToolbar";
 import {enableToolbar} from "../toolbar/setToolbar";
 import {removeCurrentToolbar} from "../toolbar/setToolbar";
 import {setCurrentToolbar} from "../toolbar/setToolbar";
@@ -730,6 +730,8 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
             }
             if (vditor.wysiwyg.popover.innerHTML !== "") {
                 setPopoverPosition(vditor, blockRenderElement);
+            } else {
+                hidePanel(vditor, ["popover"]);
             }
         } else {
             blockRenderElement = undefined;
