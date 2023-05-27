@@ -633,9 +633,11 @@ export const highlightToolbarWYSIWYG = (vditor: IVditor) => {
         vditor.wysiwyg.element
             .querySelectorAll(".vditor-wysiwyg__preview")
             .forEach((itemElement) => {
+                // 隐藏未聚焦的编辑块
                 if (!blockRenderElement || (blockRenderElement && isBlock && !blockRenderElement.contains(itemElement))) {
                     const previousElement = itemElement.previousElementSibling as HTMLElement;
                     previousElement.style.display = "none";
+                    itemElement.classList.remove('math-block-preview')
                 }
             });
         if (blockRenderElement && isBlock) {
