@@ -221,22 +221,16 @@ export class Search {
     /**
      * 替换pos所指向的node的内容
      * @param vditor
-     * @param newText   替换后的内容
+     * @param replaceText   替换后的内容
      * @param focus     是否跳转到下一个可以被替换的node
      */
-    public replace(vditor: IVditor, newText: string, focus: boolean = false) :void {
+    public replace(vditor: IVditor, replaceText: string, focus: boolean = false) :void {
         if (!this.isSearching || this.searchResults.length === 0) {
             return;
         }
 
-        // 如果newText仍然匹配searchText，则只把node文本替换为newText即可
-        const pattern = /[\[\(\$\^\.\]\*\\\?\+\{\}\\|\)]/gi
-        const newSearchText = this.searchText.replace(pattern, key => "\\" + key);
-        console.log(newSearchText)
-        const regExp = new RegExp(this.matchWholeWord ? `\\b${newSearchText}\\b` : newSearchText,
-                                  this.ignoreCase ? "i" : "");
-        if (newText.match(regExp)) {
-            this.searchResults[this.pos].textContent = newText;
+        // 如果replaceText和searchText相同, 跳过, 直接聚焦到下一个搜索结果
+        if (replaceText === this.searchText) {
             this.next(vditor);
             return;
         }
@@ -252,17 +246,53 @@ export class Search {
         }
 
         // 找到当前聚焦的匹配节点
-        const node = this.searchResults[this.pos] as HTMLElement;
+        let node = this.searchResults[this.pos];
+
         // 在当前节点前面插入一个文本节点，用于替换当前节点
-        node.parentNode.insertBefore(document.createTextNode(newText), node);
+        let textNode = document.createTextNode(replaceText);
+        node.parentNode.insertBefore(textNode, node);
         if (node.contains(wbr)) {
             node.parentNode.insertBefore(document.createElement("wbr"), node);
         }
         node.parentNode.removeChild(node);
-        // 更新搜索结果列表和指针位置
-        this.searchResults = this.searchResults.filter((node) => node !== this.searchResults[this.pos]);
-        if (this.searchResults.length === 0)                this.pos = -1;
-        else if (this.pos === this.searchResults.length)    this.pos = 0;
+        node = textNode;
+
+        // 如果replaceText仍然匹配searchText
+        const pattern = /[\[\(\$\^\.\]\*\\\?\+\{\}\\|\)]/gi;
+        const newSearchText = this.searchText.replace(pattern, key => "\\" + key);
+        const regExp = new RegExp(this.matchWholeWord ? `\\b${newSearchText}\\b` : newSearchText,
+                                  this.ignoreCase ? "i" : "");
+        if (replaceText.match(regExp)) {
+            let text = node.textContent;
+            let index = node.textContent.search(regExp);
+            const newNodeList: Node[] = [];
+
+            // 得到replaceText中所有的搜索结果, 存入newNodeList中
+            while (index !== -1) {
+                const newNode = document.createElement("span");
+                newNode.classList.add("vditor-search__result");
+                newNode.textContent = text.slice(index, index + this.searchText.length);
+                node.parentNode.insertBefore(newNode, node);
+                node.parentNode.insertBefore(document.createTextNode(text.slice(0, index)), newNode);
+                node.nodeValue = text.slice(index + this.searchText.length);
+                newNodeList.push(newNode);
+                // 更新循环变量
+                text = node.textContent;
+                index = node.textContent.search(regExp);
+            }
+
+            // 将newNodeList中的元素插入到this.searchResults中对应位置
+            this.searchResults.splice(this.pos, 1, ...newNodeList);
+            this.pos = this.pos + newNodeList.length;
+            if (this.pos === this.searchResults.length) this.pos = 0;
+        }
+
+        // 否则, 直接删除指针对应的Node，同时更新指针位置
+        else {
+            this.searchResults.splice(this.pos, 1);
+            if (this.searchResults.length === 0)                this.pos = -1;
+            else if (this.pos === this.searchResults.length)    this.pos = 0;
+        }
 
         // 将光标设置到<wbr>的位置
         setRangeByWbr(vditor[vditor.currentMode].element, getEditorRange(vditor));
@@ -299,16 +329,16 @@ export class Search {
     /**
      * 全部替换
      * @param vditor
-     * @param newText   替换后的内容
+     * @param replaceText   替换后的内容
      */
-    public replaceAll(vditor: IVditor, newText: string) :void {
-        if (!this.isSearching || this.searchResults.length === 0 || newText === this.searchText) {
+    public replaceAll(vditor: IVditor, replaceText: string) :void {
+        if (!this.isSearching || this.searchResults.length === 0 || replaceText === this.searchText) {
             return;
         }
 
         const num = this.searchResults.length;
         for (let i = 0; i < num; i++) {
-            this.replace(vditor, newText, false);
+            this.replace(vditor, replaceText, false);
         }
     }
 
