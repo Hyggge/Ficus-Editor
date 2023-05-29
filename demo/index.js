@@ -187,7 +187,7 @@ searchNextButton.addEventListener("click", () => {
 replaceButton.addEventListener("click", () => {
     const input = document.getElementById("replace-box");
     const text = input.value;
-    window.vditor.vditor.search.replace(window.vditor.vditor, text, true);
+    window.vditor.vditor.search.replace(window.vditor.vditor, text, true, true);
 })
 
 replaceAllButton.addEventListener("click", () => {

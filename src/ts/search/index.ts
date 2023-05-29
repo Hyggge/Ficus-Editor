@@ -46,7 +46,7 @@ export class Search {
 
         // 设置当前状态和当前搜索文本
         this.isSearching = true;
-        this.searchText = searchText.trim();
+        this.searchText = searchText;
         
         // 如果发现插入的<wbr>正好将一个可以匹配的字符串分割，则调整<wbr>的位置
         // 假设<wbr>正好将一个可以匹配的字符串分割, 则len1表示分割后前半部分的长度, len2表示后半部分长度
@@ -222,9 +222,10 @@ export class Search {
      * 替换pos所指向的node的内容
      * @param vditor
      * @param replaceText   替换后的内容
-     * @param focus     是否跳转到下一个可以被替换的node
+     * @param focus         是否跳转到下一个可以被替换的node
+     * @param saveCursor    是否在替换之前保存光标位置(替换后恢复)
      */
-    public replace(vditor: IVditor, replaceText: string, focus: boolean = false) :void {
+    public replace(vditor: IVditor, replaceText: string, focus: boolean = true, saveCursor = true) :void {
         if (!this.isSearching || this.searchResults.length === 0) {
             return;
         }
@@ -236,13 +237,16 @@ export class Search {
         }
 
         // 保存光标位置
-         vditor[vditor.currentMode].element.querySelectorAll("wbr").forEach((wbr) => {
-            wbr.remove();
-        });
-        insertHTML('<wbr>', vditor);
-        let wbr = vditor[vditor.currentMode].element.querySelector("wbr");
-        if (wbr.nextSibling?.textContent === "") {
-            wbr.parentNode.removeChild(wbr.nextSibling);
+        let wbr = null;
+        if (saveCursor) {
+            vditor[vditor.currentMode].element.querySelectorAll("wbr").forEach((wbr) => {
+               wbr.remove();
+            });
+            insertHTML('<wbr>', vditor);
+            wbr = vditor[vditor.currentMode].element.querySelector("wbr");
+            if (wbr.nextSibling?.textContent === "") {
+                wbr.parentNode.removeChild(wbr.nextSibling);
+            }
         }
 
         // 找到当前聚焦的匹配节点
@@ -251,7 +255,7 @@ export class Search {
         // 在当前节点前面插入一个文本节点，用于替换当前节点
         let textNode = document.createTextNode(replaceText);
         node.parentNode.insertBefore(textNode, node);
-        if (node.contains(wbr)) {
+        if (saveCursor && node.contains(wbr)) {
             node.parentNode.insertBefore(document.createElement("wbr"), node);
         }
         node.parentNode.removeChild(node);
@@ -295,7 +299,9 @@ export class Search {
         }
 
         // 将光标设置到<wbr>的位置
-        setRangeByWbr(vditor[vditor.currentMode].element, getEditorRange(vditor));
+        if (saveCursor) {
+            setRangeByWbr(vditor[vditor.currentMode].element, getEditorRange(vditor));
+        }
         // 聚焦到新的匹配节点
         if (this.pos !== -1) {
 
@@ -336,10 +342,24 @@ export class Search {
             return;
         }
 
+        // 保存光标位置
+        vditor[vditor.currentMode].element.querySelectorAll("wbr").forEach((wbr) => {
+            wbr.remove();
+        });
+        insertHTML('<wbr>', vditor);
+        let wbr = vditor[vditor.currentMode].element.querySelector("wbr");
+        if (wbr.nextSibling?.textContent === "") {
+            wbr.parentNode.removeChild(wbr.nextSibling);
+        }
+
+        // 对所有的搜索结果都进行替换
         const num = this.searchResults.length;
         for (let i = 0; i < num; i++) {
-            this.replace(vditor, replaceText, false);
+            this.replace(vditor, replaceText, false, false);
         }
+
+        // 将光标设置到<wbr>的位置
+        setRangeByWbr(vditor[vditor.currentMode].element, getEditorRange(vditor));
     }
 
     /**
