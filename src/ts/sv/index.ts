@@ -10,6 +10,7 @@ import {
 } from "../util/editorCommonEvent";
 import {paste} from "../util/fixBrowserBehavior";
 import {getSelectText} from "../util/getSelectText";
+import { getCursorPosition } from "../util/selection";
 import {inputEvent} from "./inputEvent";
 import {processAfterRender} from "./process";
 
@@ -53,6 +54,12 @@ class Editor {
                     document.execCommand("insertHTML", false, code);
                 },
             });
+
+            // 如果输入位置在页面尾部，需要调整滚动栏
+            const cursorTop = getCursorPosition(vditor[vditor.currentMode].element).top;
+            if (cursorTop > vditor.sv.element.clientHeight - 150) {
+                vditor.sv.element.scrollTop += cursorTop - vditor.sv.element.clientHeight + 150;
+            }
         });
 
         this.element.addEventListener("scroll", () => {
@@ -107,6 +114,12 @@ class Editor {
                 return;
             }
             inputEvent(vditor, event);
+
+            // 如果输入位置在页面尾部，需要调整滚动栏
+            const cursorTop = getCursorPosition(vditor[vditor.currentMode].element).top;
+            if (cursorTop > vditor.sv.element.clientHeight - 150) {
+                vditor.sv.element.scrollTop += cursorTop - vditor.sv.element.clientHeight + 150;
+            }
         });
 
         this.element.addEventListener("keyup", (event) => {

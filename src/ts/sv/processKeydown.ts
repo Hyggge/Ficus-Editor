@@ -2,7 +2,7 @@ import {isCtrl} from "../util/compatibility";
 import {fixTab} from "../util/fixBrowserBehavior";
 import {hasClosestByAttribute} from "../util/hasClosest";
 import {hasClosestByTag} from "../util/hasClosestByHeadings";
-import {getEditorRange, getSelectPosition} from "../util/selection";
+import {getCursorPosition, getEditorRange, getSelectPosition} from "../util/selection";
 import {inputEvent} from "./inputEvent";
 import {processAfterRender, processPreviousMarkers} from "./process";
 
@@ -143,6 +143,13 @@ export const processKeydown = (vditor: IVditor, event: KeyboardEvent) => {
         } else {
             processAfterRender(vditor);
         }
+
+        // 如果输入位置在页面尾部，需要调整滚动栏
+        const cursorTop = getCursorPosition(vditor[vditor.currentMode].element).top;
+        if (cursorTop > vditor.sv.element.clientHeight - 150) {
+            vditor.sv.element.scrollTop += cursorTop - vditor.sv.element.clientHeight + 150;
+        }
+
         event.preventDefault();
         return true;
     }

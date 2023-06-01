@@ -133,6 +133,10 @@ export const setPadding = (vditor: IVditor) => {
     vditor.toolbar.element.style.paddingLeft = (5 +
       (vditor.options.outline.position === "left" ? vditor.outline.element.offsetWidth : 0)) + "px";
   }
+
+  if (vditor.sv.element.style.display !== "none") {
+    vditor.sv.element.style.paddingBottom = "150px";
+  }
 };
 
 export const setTypewriterPosition = (vditor: IVditor) => {
