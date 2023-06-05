@@ -30,6 +30,7 @@ import {input} from "./input";
 import {showCode} from "./showCode";
 import {getMarkdown} from "../markdown/getMarkdown";
 import { getSelectMD } from "../util/getSelectText";
+import { getHeadingInfoFromTOC, scrollToHeading2 } from "../util/scrollToHeading";
 
 class WYSIWYG {
     public range: Range;
@@ -456,7 +457,15 @@ class WYSIWYG {
                 showCode(previewElement, vditor);
             }
 
-            clickToc(event, vditor);
+            // clickToc(event, vditor);
+
+            // toc跳转
+            const liElement = hasClosestByMatchTag(event.target, "LI") as HTMLElement;
+            const toc = hasClosestByClassName(liElement, "vditor-toc") as HTMLElement;
+            if (liElement &&  hasClosestByClassName(liElement, "vditor-toc")) {
+                const info = getHeadingInfoFromTOC(liElement, toc);
+                scrollToHeading2(info, vditor);
+            }
         });
 
         this.element.addEventListener("keyup", (event: KeyboardEvent & { target: HTMLElement }) => {

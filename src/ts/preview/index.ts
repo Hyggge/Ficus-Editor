@@ -16,6 +16,7 @@ import {hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
 import {hasClosestByTag} from "../util/hasClosestByHeadings";
 import {setSelectionFocus} from "../util/selection";
 import {previewImage} from "./image";
+import { getHeadingInfoFromTOC, scrollToHeading2 } from "../util/scrollToHeading";
 
 export class Preview {
     public element: HTMLElement;
@@ -43,15 +44,29 @@ export class Preview {
             event.preventDefault();
         });
         previewElement.addEventListener("click", (event: MouseEvent & { target: HTMLElement }) => {
-            const spanElement = hasClosestByMatchTag(event.target, "SPAN");
-            if (spanElement && hasClosestByClassName(spanElement, "vditor-toc")) {
-                const headingElement =
-                    previewElement.querySelector("#" + spanElement.getAttribute("data-target-id")) as HTMLElement;
-                if (headingElement) {
-                    this.element.scrollTop = headingElement.offsetTop;
-                }
-                return;
+            // const liElement = hasClosestByMatchTag(event.target, "LI");
+            // if (! liElement) return;
+
+            // const spanElement = liElement.children[0];
+            // if (spanElement && hasClosestByClassName(spanElement, "vditor-toc")) {
+            //     const headingElement =
+            //         previewElement.querySelector("#" + spanElement.getAttribute("data-target-id")) as HTMLElement;
+            //     if (headingElement) {
+            //         this.element.scrollTop = headingElement.offsetTop;
+            //     }
+            //     return;
+            // }
+
+            // toc跳转
+            const liElement = hasClosestByMatchTag(event.target, "LI") as HTMLElement;
+            const toc = hasClosestByClassName(liElement, "vditor-toc") as HTMLElement;
+            if (liElement &&  hasClosestByClassName(liElement, "vditor-toc")) {
+                const info = getHeadingInfoFromTOC(liElement, toc);
+                console.log(info)
+                scrollToHeading2(info, vditor);
             }
+
+
             if (event.target.tagName === "A") {
                 if (vditor.options.link.click) {
                     vditor.options.link.click(event.target);

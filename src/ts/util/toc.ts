@@ -22,7 +22,10 @@ export const renderToc = (vditor: IVditor) => {
 };
 
 export const clickToc = (event: MouseEvent & { target: HTMLElement }, vditor: IVditor) => {
-    const spanElement = hasClosestByMatchTag(event.target, "SPAN");
+    const liElement = hasClosestByMatchTag(event.target, "LI");
+    if (! liElement) return;
+
+    const spanElement = liElement.children[0];
     if (spanElement && hasClosestByClassName(spanElement, "vditor-toc")) {
         const headingElement = vditor[vditor.currentMode].element.querySelector("#" + spanElement.getAttribute("data-target-id")) as HTMLElement;
         if (headingElement) {
