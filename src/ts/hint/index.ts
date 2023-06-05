@@ -143,8 +143,8 @@ export class Hint {
 
         // 链接提示
         const link = hasClosestByClassName(range.startContainer, "vditor-sv__marker--link");
-        if (link) {
-            this.genHintHTML(link, vditor);
+        if (link && range.toString().length == 0) {
+            this.genLinkHintHTML(link, vditor);
             return;
         }
 
@@ -194,7 +194,7 @@ export class Hint {
         }
     }
 
-    public genHintHTML = async (link: HTMLElement, vditor: IVditor) => {
+    public genLinkHintHTML = async (link: HTMLElement, vditor: IVditor) => {
         // 合并link中所有的文本节点
         insertHTML('<wbr>', vditor)
         const textNodes = Array.from(link.childNodes);
