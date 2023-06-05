@@ -26,7 +26,6 @@ export class Search {
      * @param vditor 
      */
     public run(vditor: IVditor, searchText: string, focus: boolean = false) :void {
-        console.log("search run")
         // 保存光标位置
         vditor[vditor.currentMode].element.querySelectorAll("wbr").forEach((wbr) => {
             wbr.remove();
@@ -429,7 +428,6 @@ export class Search {
             }
         }
 
-        console.log(result)
         return result;
     }
 
@@ -464,7 +462,6 @@ export class Search {
         }
         // 如果wbr在可匹配文本之间, 则返回该文本所在的位置
         const wbr = vditor[vditor.currentMode].element.querySelector("wbr")
-        console.log("enter getStartPos: ", wbr.parentElement.outerHTML)
         if (wbr.parentElement.classList.contains('vditor-search__result')) {
             return this.searchResults.indexOf(wbr.parentElement)
         }

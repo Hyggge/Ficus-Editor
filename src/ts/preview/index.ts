@@ -62,7 +62,6 @@ export class Preview {
             const toc = hasClosestByClassName(liElement, "vditor-toc") as HTMLElement;
             if (liElement &&  hasClosestByClassName(liElement, "vditor-toc")) {
                 const info = getHeadingInfoFromTOC(liElement, toc);
-                console.log(info)
                 scrollToHeading2(info, vditor);
             }
 

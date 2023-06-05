@@ -100,7 +100,6 @@ export const scrollToHeading2 = (info: number[], vditor: IVditor) => {
             // 应找到previewElement后的第cnt[i]+1个i+1级标题
             let curLevel = 7;
             while(previewElement && previewElement != previewElement.parentElement.lastElementChild) {
-                console.log(previewElement)
                 if (previewElement.tagName.match(/H\d/) 
                         && Number.parseInt(previewElement.tagName[1]) <= curLevel) {
                     curLevel = Number.parseInt(previewElement.tagName[1]);

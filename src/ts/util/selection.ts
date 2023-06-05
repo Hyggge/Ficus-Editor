@@ -13,10 +13,8 @@ export const getEditorRange = (vditor: IVditor) => {
         }
     }
     if (vditor[vditor.currentMode].range) { // ????
-        console.log(2)
         return vditor[vditor.currentMode].range;
     }
-    console.log(3)
     element.focus();
     range = element.ownerDocument.createRange();
     range.setStart(element, 0);
