@@ -225,7 +225,7 @@ export class Search {
      * @param saveCursor    是否在替换之前保存光标位置(替换后恢复)
      */
     public replace(vditor: IVditor, replaceText: string, focus: boolean = true, saveCursor = true) :void {
-        if (!this.isSearching || this.searchResults.length === 0) {
+        if (!this.isSearching || this.searchResults.length === 0 || vditor.options.editable === false) {
             return;
         }
 

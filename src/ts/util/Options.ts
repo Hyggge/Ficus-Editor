@@ -4,6 +4,7 @@ import {merge} from "./merge";
 export class Options {
     public options: IOptions;
     private defaultOptions: IOptions = {
+        editable: true,
         popoverToolbar: {
             bold: true,
             italic: true,

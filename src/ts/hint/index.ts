@@ -226,7 +226,7 @@ export class Hint {
     }
 
     public genHTML(data: IHintData[], key: string, vditor: IVditor) {
-        if (data.length === 0) {
+        if (data.length === 0 || vditor.options.editable === false) {
             this.element.style.display = "none";
             return;
         }

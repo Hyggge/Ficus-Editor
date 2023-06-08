@@ -717,10 +717,12 @@ class Vditor extends VditorMethod {
     /** 设置是否可以编辑 */
     public setEditable(enable: boolean) {
         if (enable) {
+            this.vditor.options.editable = true;
             this.vditor.wysiwyg.element.contentEditable = "true";
             this.vditor.sv.element.contentEditable = "true";
             this.vditor.ir.element.contentEditable = "true";
         } else {
+            this.vditor.options.editable = false;
             this.vditor.wysiwyg.element.contentEditable = "false";
             this.vditor.sv.element.contentEditable = "false";
             this.vditor.ir.element.contentEditable = "false";
