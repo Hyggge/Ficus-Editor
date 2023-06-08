@@ -2,7 +2,7 @@ import {Constants} from "../constants";
 import {processAfterRender} from "../ir/process";
 import { getHTML } from "../markdown/getHTML";
 import {code160to32} from "../util/code160to32";
-import {isCtrl} from "../util/compatibility";
+import {isCtrl, updateHotkeyTip} from "../util/compatibility";
 import {execAfterRender} from "../util/fixBrowserBehavior";
 import {hasClosestByAttribute, hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
 import {processCodeRender} from "../util/processCode";
@@ -325,7 +325,11 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
                 range.collapse(false);
                 // {detail: 1}用于标识这个自定义事件是在编程语言选择后触发的
                 // 用于在鼠标选择语言后，自动聚焦到代码输入框
-                inputElement.dispatchEvent(new CustomEvent("input", {detail: 1}));
+                if (inputElement.getAttribute("placeholder")  ===  (window.VditorI18n.language + "<" + updateHotkeyTip("⌥Enter") + ">")) {
+                    inputElement.dispatchEvent(new CustomEvent("input", {detail: 1}));
+                } else {
+                    inputElement.focus();
+                }
                 this.recentLanguage = value.trimRight();
                 return;
             }
