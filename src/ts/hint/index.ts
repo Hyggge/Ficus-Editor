@@ -321,6 +321,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             }
             if (inputElement && inputElement.classList.contains("vditor-input")) {
                 inputElement.value = value.trimRight();
+                inputElement.dispatchEvent(new Event('input'));
                 range.selectNodeContents(inputElement);
                 range.collapse(false);
                 // {detail: 1}用于标识这个自定义事件是在编程语言选择后触发的

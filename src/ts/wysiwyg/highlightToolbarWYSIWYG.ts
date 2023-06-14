@@ -1236,7 +1236,7 @@ export const genAPopover = (vditor: IVditor, aElement: HTMLElement, range: Range
                 return;
             }
         vditor.hint.select(event, vditor);
-        focusToElement(event, range);
+        // focusToElement(event, range);
     };
     input1.onkeyup = async (event) => {
         if (
@@ -1343,7 +1343,7 @@ export const genImagePopover = (event: Event, vditor: IVditor, img?: HTMLElement
             return;
         }
         vditor.hint.select(event, vditor);
-        focusToElement(event, getEditorRange(vditor));
+        // focusToElement(event, getEditorRange(vditor));
     };
     inputElement.onkeyup = async (event) => {
         if (
