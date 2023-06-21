@@ -42,6 +42,7 @@ class WYSIWYG {
     public preventInput: boolean;
     public composingLock = false;
     public commentIds: string[] = [];
+    public newCodeBlock = false;
     private scrollListener: () => void;
 
     constructor(vditor: IVditor) {

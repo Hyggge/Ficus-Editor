@@ -831,6 +831,7 @@ interface IVditor {
         preventInput: boolean,
         composingLock: boolean,
         commentIds: string[]
+        newCodeBlock: boolean,
         getComments(vditor: IVditor, getData?: boolean): ICommentsData[],
         triggerRemoveComment(vditor: IVditor): void,
         showComment(): void,

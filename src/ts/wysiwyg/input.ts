@@ -158,8 +158,11 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
             .replace(/<\/(em|i)><em data-marker="\W{1}">/g, "")
             .replace(/<\/(s|strike)><s data-marker="~{1,2}">/g, "");
 
-        if (html === '<p data-block="0">```<wbr></p>' && vditor.hint.recentLanguage) {
-            html = '<p data-block="0">```<wbr></p>'.replace("```", "```" + vditor.hint.recentLanguage);
+        if (html === '<p data-block="0">```<wbr></p>') {
+            if (vditor.hint.recentLanguage) {
+                html = '<p data-block="0">```<wbr></p>'.replace("```", "```" + vditor.hint.recentLanguage);
+            }
+            vditor.wysiwyg.newCodeBlock = true;
         }
 
         log("SpinVditorDOM", html, "argument", vditor.options.debugger);
