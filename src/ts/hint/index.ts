@@ -56,7 +56,7 @@ export class Hint {
         hintExtends.push({key: ":"});
 
         this.c0.forEach(
-            (item) => {this.latexList.push(item) + '<wbr>'}
+            (item) => {this.latexList.push(item + '<wbr>')}
         )
         this.c1.forEach(
             (item) => {this.latexList.push(item + '{<wbr>}')}
@@ -64,7 +64,7 @@ export class Hint {
         this.c2.forEach(
             (item) => {this.latexList.push(item + '{<wbr>}{}')}
         )
-        this.latexList.push('begin{}<wbr>')
+        this.latexList.push('begin{<wbr>}')
 
         hintExtends.push(
             {
