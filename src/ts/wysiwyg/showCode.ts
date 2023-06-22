@@ -16,6 +16,9 @@ export const showCode = (previewElement: HTMLElement, vditor: IVditor, first = t
         }
     } else {
         previousElement.style.display = "block";
+        if (previousElement.querySelector("code[data-type='math-block']")) {
+            previewElement.classList.add("math-block-preview")
+        }
 
         if (!previousElement.firstChild.firstChild) {
             previousElement.firstChild.appendChild(document.createTextNode(""));

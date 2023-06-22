@@ -128,7 +128,6 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
     // 如果是高亮
     if (commandName === "highlight") {
         // bold, italic, strike, highlight
-        console.log('enter')
         useHighlight = false;
         actionBtn.classList.add("vditor-menu--current");
 
@@ -143,7 +142,6 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
             range.setStart(node.firstChild, 1);
             range.collapse(true);
             setSelectionFocus(range);
-            console.log(1)
         } else {
             document.execCommand('BackColor', false, 'yellow')
             // 将选中的文字用 mark 包裹
@@ -251,6 +249,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
         } else if (commandName === "inline-code") {
             if (range.toString() === "") {
                 const node = document.createElement("code");
+                node.setAttribute("data-marker", "`")
                 node.textContent = Constants.ZWSP;
                 range.insertNode(node);
                 range.setStart(node.firstChild, 1);
@@ -258,6 +257,7 @@ export const toolbarEvent = (vditor: IVditor, actionBtn: Element, event: Event) 
                 setSelectionFocus(range);
             } else if (range.startContainer.nodeType === 3) {
                 const node = document.createElement("code");
+                node.setAttribute("data-marker", "`")
                 range.surroundContents(node);
                 range.insertNode(node);
                 setSelectionFocus(range);

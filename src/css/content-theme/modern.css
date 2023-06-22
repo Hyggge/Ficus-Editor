@@ -217,13 +217,34 @@ pre.vditor-sv:focus {
   font-size: 16px;
   line-height: 24px;
   background: var(--SwissCoffee-500);
-  padding: 20px !important;
+  padding-top: 20px !important;
+  padding-right: 20px !important;
+  padding-bottom: 20px !important;
+  padding-left: 20px;
 }
 
 /** 内联公式, 公式块的展示区域 **/
 
 .vditor-reset span.katex-html {
   font-size: 16px;
+  padding: 10px 0px;
+}
+
+.vditor-reset mjx-container svg {
+  height: 11px;
+  vertical-align: 0 !important;
+}
+
+/* .vditor-reset mjx-container.MathJax.CtxtMenu_Attached_0 {
+  margin: 0;
+} */
+
+.vditor-reset .math-block-preview {
+  background: var(--SwissCoffee-500);
+}
+
+.vditor-reset div.language-math.vditor-reset--error {
+  padding: 10px 10px;
 }
 
 /** 内联公式编辑区域 **/
@@ -238,7 +259,7 @@ pre.vditor-sv:focus {
 /** 公式块编辑区域 **/
 
 .vditor-reset code[data-type="math-block"] {
-  background-color: var(--SwissCoffee-500);
+  background-color: var(--TextLight);
   font-size: 16px;
   line-height: 30px;
   padding: 0.6em 0.6em !important;
@@ -295,13 +316,35 @@ pre.vditor-sv:focus {
 /** 普通连接 **/
 
 .vditor-reset a {
-  color: #23C99A;
+  color: #4a72d3;
   text-decoration: underline;
 }
 
 /** 文件引用 **/
 
 .vditor-reset a.ficus-filelink {
-  color: #4a72d3;
+  color: #23C99A;
   text-decoration: underline;
+}
+
+/** 搜索高亮 **/
+.vditor-reset span.vditor-search__result {
+  background-color: #c8e6d2;
+}
+
+.vditor-reset span.vditor-search__current {
+  background-color: #b6f07c;
+}
+
+/** 图片居中 **/
+.vditor img:not([src=""]):not([src="ficus://"]) {
+  margin: auto;
+  display: block;
+}
+
+/** toc **/
+
+.vditor-reset .vditor-toc span {
+  color: #23C99A;
+  font-weight: 900;
 }

@@ -2,7 +2,7 @@ import {Constants} from "../constants";
 import {processAfterRender} from "../ir/process";
 import { getHTML } from "../markdown/getHTML";
 import {code160to32} from "../util/code160to32";
-import {isCtrl} from "../util/compatibility";
+import {isCtrl, updateHotkeyTip} from "../util/compatibility";
 import {execAfterRender} from "../util/fixBrowserBehavior";
 import {hasClosestByAttribute, hasClosestByClassName, hasClosestByMatchTag} from "../util/hasClosest";
 import {processCodeRender} from "../util/processCode";
@@ -54,7 +54,6 @@ export class Hint {
         this.element.className = "vditor-hint";
         this.recentLanguage = "";
         hintExtends.push({key: ":"});
-        console.log(this.latexList)
 
         this.c0.forEach(
             (item) => {this.latexList.push(item) + '<wbr>'}
@@ -72,11 +71,9 @@ export class Hint {
                 key: '\\',
                 hint: (key) =>
                 {
-                    console.log('key :' + key + "!")
                     let ret :IHintData[]= []
                     let ret0 :IHintData[]= []
-                    // if ('vditor'.indexOf(key.toLocaleLowerCase()) > -1) {
-                    if (key != "")
+                    if (key !== "")
                     {
                         this.latexList.forEach(
                             (kw) =>
@@ -146,11 +143,18 @@ export class Hint {
             return;
         }
         let currentLineValue: string;
-        const range = getSelection().getRangeAt(0);
+        let range = getSelection().getRangeAt(0);
+
+        // 链接提示
+        const link = hasClosestByClassName(range.startContainer, "vditor-sv__marker--link");
+        if (link && range.toString().length == 0) {
+            this.genLinkHintHTML(link, vditor);
+            return;
+        }
+
         // 截取开头和光标位置之间的字符串
         currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
         // 当前行
-        console.log("lineBeforeCursion: ", currentLineValue + "!")
         const key = this.getKey(currentLineValue, vditor.options.hint.extend);
 
         if (typeof key === "undefined") {
@@ -159,7 +163,6 @@ export class Hint {
         } else {
             if (this.splitChar === ":") {
                 const emojiHint = key === "" ? vditor.options.hint.emoji : vditor.lute.GetEmojis();
-                console.log(emojiHint)
                 const matchEmojiData: IHintData[] = [];
                 Object.keys(emojiHint).forEach((keyName) => {
                     if (keyName.indexOf(key.toLowerCase()) === 0) {
@@ -182,7 +185,6 @@ export class Hint {
             } else {
                 vditor.options.hint.extend.forEach((item) => {
                     if (item.key === this.splitChar) {
-                        console.log(this.isMath(vditor))
                         if ((item.key === "\\" || item.key === "begin{") && !this.isMath(vditor)) {
                             return;
                         }
@@ -196,8 +198,39 @@ export class Hint {
         }
     }
 
+    public genLinkHintHTML = async (link: HTMLElement, vditor: IVditor) => {
+        // 合并link中所有的文本节点
+        insertHTML('<wbr>', vditor)
+        const textNodes = Array.from(link.childNodes);
+        for (let i = 1; i < textNodes.length; i++) {
+            const item = textNodes[i];
+            if (item.nodeType === 3 && item.previousSibling.nodeType === 3) {
+                item.previousSibling.textContent += item.textContent;
+                item.remove();
+            }
+        }
+        const range = new Range();
+        range.setStart(link.childNodes[0], 0);
+        setRangeByWbr(vditor.sv.element, range);
+
+        // 截取开头和光标位置之间的字符串
+        const currentLineValue = range.startContainer.textContent.substring(0, range.startOffset) || "";
+
+        // 构造提示列表
+        const matchingData: IHintData[] = [];
+        const hints = await vditor.options.hint.genLinkHint(currentLineValue);
+        for (let i in hints) {
+            matchingData.push({
+                html: hints[i].trim(),
+                value: hints[i].trim(),
+            });
+        }
+        this.lastIndex = 0;
+        vditor.hint.genHTML(matchingData, currentLineValue, vditor);
+    }
+
     public genHTML(data: IHintData[], key: string, vditor: IVditor) {
-        if (data.length === 0) {
+        if (data.length === 0 || vditor.options.editable === false) {
             this.element.style.display = "none";
             return;
         }
@@ -296,7 +329,11 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
                 range.collapse(false);
                 // {detail: 1}用于标识这个自定义事件是在编程语言选择后触发的
                 // 用于在鼠标选择语言后，自动聚焦到代码输入框
-                inputElement.dispatchEvent(new CustomEvent("input", {detail: 1}));
+                if (inputElement.getAttribute("placeholder")  ===  (window.VditorI18n.language + "<" + updateHotkeyTip("⌥Enter") + ">")) {
+                    inputElement.dispatchEvent(new CustomEvent("input", {detail: 1}));
+                } else {
+                    inputElement.focus();
+                }
                 this.recentLanguage = value.trimRight();
                 return;
             }
@@ -341,8 +378,6 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             if (preElement && preElement.lastElementChild.classList.contains("vditor-wysiwyg__preview")) {
                 // 将编辑区的内容同步到预览区
                 preElement.lastElementChild.innerHTML = preElement.firstElementChild.innerHTML;
-                // 保存光标位置
-                insertHTML('<wbr>', vditor)
                 // 调用SpinVditorDOM方法，进行初步渲染
                 preElement.insertAdjacentHTML("afterend", vditor.lute.SpinVditorDOM(preElement.outerHTML));
                 preElement = preElement.nextElementSibling as HTMLElement;
@@ -356,6 +391,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
 
                 showCode(preElement.lastElementChild as HTMLElement, vditor, false);
                 processCodeRender(preElement.lastElementChild as HTMLElement, vditor);
+                // 由于hint已经带了一个wbr标签，所以这里只需要将光标移动到wbr标签所在位置即可
                 setRangeByWbr(preElement, range)
             }
         } else if (vditor.currentMode === "ir") {
@@ -411,7 +447,6 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
     private getKey(currentLineValue: string, extend: IHintExtend[]) {
         this.lastIndex = -1;
         this.splitChar = "";
-        console.log('extend ', extend)
 
 
         // 找到最后一个出现的 key
@@ -463,13 +498,11 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
             if (startContainer.nodeType === 3 && startContainer.previousSibling?.nodeType === 1 &&
                     (startContainer.previousSibling as HTMLElement).matches("span.vditor-sv__marker") &&
                     (startContainer.previousSibling as HTMLElement).innerHTML === "$") {
-                console.log('内联数学公式')
                 return true;
             }
             // 数学公式块
             if (divElement && divElement.firstElementChild.matches("span.vditor-sv__marker") &&
                     divElement.firstElementChild.innerHTML === "$$") {
-                console.log('数学公式块')
                 return true;
             }
         }

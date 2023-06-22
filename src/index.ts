@@ -37,6 +37,8 @@ import {input} from "./ts/wysiwyg/input";
 import {renderDomByMd} from "./ts/wysiwyg/renderDomByMd";
 import {setEditMode} from "./ts/toolbar/EditMode"
 import {exportHTML, exportPDF} from "./ts/export/index"
+import { Search } from "./ts/search/index";
+import { scrollToHeading } from "./ts/util/scrollToHeading";
 
 class Vditor extends VditorMethod {
     public readonly version: string;
@@ -115,6 +117,19 @@ class Vditor extends VditorMethod {
     public getValue() {
         return getMarkdown(this.vditor);
     }
+
+    /** 设置编辑器主题 */
+    public setContentTheme(contentTheme: string, contentThemePath?: string) {
+        this.vditor.options.preview.theme.current = contentTheme;
+        setContentTheme(contentTheme, contentThemePath || this.vditor.options.preview.theme.path);
+    }
+
+    /** 设置代码主题 */
+    public setCodeTheme(codeTheme: string) {
+        this.vditor.options.preview.hljs.style = codeTheme;
+        setCodeTheme(codeTheme, this.vditor.options.cdn);
+    }
+
 
     /** 获取编辑器当前编辑模式 */
     public getCurrentMode() {
@@ -523,53 +538,7 @@ class Vditor extends VditorMethod {
 
     /** 跳转到对应标题处 **/
     public scrollToHeading(info: number[]) {
-        let cnt = [...info];
-        if (this.vditor.currentMode === "wysiwyg") {
-            // 找到对应元素
-            let element: Element = document.querySelector('.vditor-wysiwyg > .vditor-reset').firstElementChild;
-            for (let i = 0; i < 6; i++) {
-                // 如果cnt[i]为-1，说明该级标题不存在, 跳过
-                if (cnt[i] === -1) continue;
-                // 应找到element后的第cnt[i]+1个i+1级标题
-                while(element && element != element.parentElement.lastElementChild) {
-                    if (element.tagName === `H${i+1}`) cnt[i]--;
-                    if (cnt[i] === -1) break;
-                    element = element.nextElementSibling;
-                }
-            }
-            // 滚动到对应位置
-            this.vditor.wysiwyg.element.scrollTop = (element as HTMLElement).offsetTop;
-        }
-        else if (this.vditor.currentMode === "sv") {
-            // 在左侧编辑栏中找到对应元素
-            let svElement: Element = document.querySelector('.vditor-sv').firstElementChild;
-            for (let i = 0; i < 6; i++) {
-                // 如果cnt[i]为-1，说明该级标题不存在, 跳过
-                if (cnt[i] === -1) continue;
-                // 应找到svElement后的第cnt[i]+1个i+1级标题
-                while(svElement && svElement != svElement.parentElement.lastElementChild) {
-                    if (svElement.querySelector(`span.h${i+1}`)) cnt[i]--;
-                    if (cnt[i] === -1) break;
-                    svElement = svElement.nextElementSibling;
-                }
-            }
-            // 在右侧预览栏中找到对应元素
-            cnt = [...info]
-            let previewElement: Element = document.querySelector('.vditor-preview > .vditor-reset').firstElementChild;
-            for (let i = 0; i < 6; i++) {
-                // 如果cnt[i]为-1，说明该级标题不存在, 跳过
-                if (cnt[i] === -1) continue;
-                // 应找到previewElement后的第cnt[i]+1个i+1级标题
-                while(previewElement && previewElement != previewElement.parentElement.lastElementChild) {
-                    if (previewElement.tagName === `H${i+1}`) cnt[i]--;
-                    if (cnt[i] === -1) break;
-                    previewElement = previewElement.nextElementSibling;
-                }
-            }
-            // 滚动到对应位置
-            this.vditor.sv.element.scrollTop = (svElement as HTMLElement).offsetTop;
-            this.vditor.preview.element.scrollTop = (previewElement as HTMLElement).offsetTop;
-        }
+        scrollToHeading(info, this.vditor)
     }
 
     /** 清除样式 **/
@@ -647,6 +616,120 @@ class Vditor extends VditorMethod {
         }
     }
 
+    /* 切换Latex引擎 */
+    public setLatexEngine(engine: string) {
+        if (engine === this.vditor.options.preview.math.engine) {
+            return;
+        }
+        // 在options中切换引擎
+        if (engine === "KaTex") {
+            this.vditor.options.preview.math.engine = "KaTeX";
+        } else {
+            this.vditor.options.preview.math.engine = "MathJax";
+        }
+        // 重新渲染已有的数学公式
+        if (this.vditor.currentMode === "wysiwyg") {
+            renderDomByMd(this.vditor, getMarkdown(this.vditor), {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: false,
+            });
+        } else if (this.vditor.currentMode === "sv") {
+            this.vditor.sv.element.innerHTML = `<div data-block='0'>${this.vditor.lute.SpinVditorSVDOM(getMarkdown(this.vditor))}</div>`;
+            processSVAfterRender(this.vditor, {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: false,
+            });
+        }
+    }
+
+    /* 设置代码块行号的显示和隐藏 */
+    public setCodeBlockLineNumber(enable: boolean) {
+        if (this.vditor.options.preview.hljs.lineNumber === enable) {
+            return;
+        }
+        // 在options中设置
+        this.vditor.options.preview.hljs.lineNumber = enable;
+        // 重新渲染已有的代码块
+        if (this.vditor.currentMode === "wysiwyg") {
+            renderDomByMd(this.vditor, getMarkdown(this.vditor), {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: false,
+            });
+        } else if (this.vditor.currentMode === "sv") {
+            this.vditor.sv.element.innerHTML = `<div data-block='0'>${this.vditor.lute.SpinVditorSVDOM(getMarkdown(this.vditor))}</div>`;
+            processSVAfterRender(this.vditor, {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: false,
+            });
+        }
+    }
+
+    /* 设置sv模式下自动加空格 */
+    public setAutoSpace(enable: boolean) {
+        if (this.vditor.options.preview.markdown.autoSpace === enable) {
+            return;
+        }
+        // 在options中设置
+        this.vditor.options.preview.markdown.autoSpace = enable;
+        this.vditor.lute.SetAutoSpace(enable);
+        // 在sv模式下重新渲染
+        if (this.vditor.currentMode === "sv") {
+            this.vditor.preview.render(this.vditor);
+        }
+    }
+
+    /** 设置自动矫正术语 */
+    public setAutoFixTermTypo(enable: boolean) {
+        if (this.vditor.options.preview.markdown.fixTermTypo === enable) {
+            return;
+        }
+        // 在options中设置
+        this.vditor.options.preview.markdown.fixTermTypo = enable;
+        this.vditor.lute.SetFixTermTypo(enable);
+        // 重新渲染
+        if (this.vditor.currentMode === "wysiwyg") {
+            renderDomByMd(this.vditor, getMarkdown(this.vditor), {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: true,
+            });
+        } else if (this.vditor.currentMode === "sv") {
+            this.vditor.sv.element.innerHTML = `<div data-block='0'>${this.vditor.lute.SpinVditorSVDOM(getMarkdown(this.vditor))}</div>`;
+            processSVAfterRender(this.vditor, {
+                enableAddUndoStack: true,
+                enableHint: false,
+                enableInput: true,
+            });
+        }
+    }
+
+    /** 设置悬浮工具框的内容 */
+    public setPopoverToolbar(options: IOptions["popoverToolbar"]) {
+        this.vditor.options.popoverToolbar = options;
+        this.vditor.wysiwyg.popover.innerHTML = "";
+        this.vditor.wysiwyg.popover.style.display = "none";
+    }
+
+    /** 设置是否可以编辑 */
+    public setEditable(enable: boolean) {
+        if (enable) {
+            this.vditor.options.editable = true;
+            this.vditor.wysiwyg.element.contentEditable = "true";
+            this.vditor.sv.element.contentEditable = "true";
+            this.vditor.ir.element.contentEditable = "true";
+        } else {
+            this.vditor.options.editable = false;
+            this.vditor.wysiwyg.element.contentEditable = "false";
+            this.vditor.sv.element.contentEditable = "false";
+            this.vditor.ir.element.contentEditable = "false";
+        }
+    }
+
+
     private init(id: HTMLElement, mergedOptions: IOptions) {
         this.vditor = {
             currentMode: mergedOptions.mode,
@@ -657,6 +740,7 @@ class Vditor extends VditorMethod {
             originalInnerHTML: id.innerHTML,
             outline: new Outline(window.VditorI18n.outline),
             tip: new Tip(),
+            search: new Search(),
         };
 
         this.vditor.sv = new Editor(this.vditor);

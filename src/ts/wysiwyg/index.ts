@@ -30,6 +30,7 @@ import {input} from "./input";
 import {showCode} from "./showCode";
 import {getMarkdown} from "../markdown/getMarkdown";
 import { getSelectMD } from "../util/getSelectText";
+import { getHeadingInfoFromTOC, scrollToHeading2 } from "../util/scrollToHeading";
 
 class WYSIWYG {
     public range: Range;
@@ -389,7 +390,7 @@ class WYSIWYG {
 
         this.element.addEventListener("click", (event: MouseEvent & { target: HTMLElement }) => {
             scrollCenter(vditor);
-            if (event.target.tagName === "INPUT") {
+            if (event.target.tagName === "INPUT" && vditor.options.editable === true) {
                 const checkElement = event.target as HTMLInputElement;
                 if (checkElement.checked) {
                     checkElement.setAttribute("checked", "checked");
@@ -401,7 +402,7 @@ class WYSIWYG {
                 return;
             }
 
-            if (event.target.tagName === "IMG" &&
+            if (event.target.tagName === "IMG" && vditor.options.editable === true &&
                 // plantuml 图片渲染不进行提示
                 !event.target.parentElement.classList.contains("vditor-wysiwyg__preview")) {
                 if (event.target.getAttribute("data-type") === "link-ref") {
@@ -413,7 +414,7 @@ class WYSIWYG {
             }
 
             // 打开链接
-            if (event.target.tagName === "A") {
+            if (event.target.tagName === "A"  && vditor.options.editable === true) {
                 if (event.ctrlKey === false) {
                     genAPopover(vditor, event.target, getSelection().getRangeAt(0))
                     return;
@@ -456,7 +457,15 @@ class WYSIWYG {
                 showCode(previewElement, vditor);
             }
 
-            clickToc(event, vditor);
+            // clickToc(event, vditor);
+
+            // toc跳转
+            const liElement = hasClosestByMatchTag(event.target, "LI") as HTMLElement;
+            const toc = hasClosestByClassName(liElement, "vditor-toc") as HTMLElement;
+            if (liElement &&  hasClosestByClassName(liElement, "vditor-toc")) {
+                const info = getHeadingInfoFromTOC(liElement, toc);
+                scrollToHeading2(info, vditor);
+            }
         });
 
         this.element.addEventListener("keyup", (event: KeyboardEvent & { target: HTMLElement }) => {

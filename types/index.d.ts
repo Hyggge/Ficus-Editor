@@ -559,6 +559,9 @@ interface IHint {
     /** 表情图片地址。默认值: 'https://unpkg.com/vditor@${VDITOR_VERSION}/dist/images/emoji' */
     emojiPath?: string;
     extend?: IHintExtend[];
+    /** 链接地址、图片地址的提示 */
+    genLinkHint?(input: string): string[];
+
 }
 
 /** @link https://ld246.com/article/1549638745630#options-toolbarConfig */
@@ -609,6 +612,17 @@ interface FicusHotkey {
 
 /** @link https://ld246.com/article/1549638745630#options */
 interface IOptions {
+    /** 是否可以编辑 */
+    editable?: boolean;
+    /** 选中文字后的悬浮工具框 */
+    popoverToolbar?: {
+        bold: boolean;
+        italic: boolean;
+        strike: boolean;
+        inlineCode: boolean;
+        inlineMath: boolean;
+        clear: boolean;
+    };
     /** ficus定义的快捷键, 具有最高优先级 **/
     ficusHotkey?: FicusHotkey[];
     /** 是否启用撤销功能 **/
@@ -752,6 +766,7 @@ interface IEChart {
 interface IVditor {
     element: HTMLElement;
     options: IOptions;
+    search: ISearch;
     originalInnerHTML: string;
     lute: Lute;
     currentMode: "sv" | "wysiwyg" | "ir";
@@ -843,4 +858,23 @@ interface IVditor {
 interface ICommentsData {
     id: string;
     top: number;
+}
+
+interface ISearch {
+    readonly isSearching: boolean;
+    readonly searchText: string;
+    run(vditor: IVditor, searchText: string, focus: boolean): void;
+    close(vditor: IVditor) :void;
+    next(vditor: IVditor) :void;
+    prev(vditor: IVditor) :void;
+    replace(vditor: IVditor, newText: string, focus: boolean, saveCursor:boolean): void;
+    replaceAll(vditor: IVditor, newText: string): void;
+    setIgnoreCase(ignoreCase: boolean): void;
+    setMatchWholeWord(matchWholeWord: boolean): void;
+    getSearchCounter(): ISearchCounter;
+}
+
+interface ISearchCounter {
+    current : number;
+    total : number;
 }

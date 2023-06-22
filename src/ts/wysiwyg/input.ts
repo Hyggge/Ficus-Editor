@@ -1,7 +1,7 @@
 import { InsertAfter } from "../toolbar/InsertAfter";
 import {
     getTopList,
-    hasClosestBlock, hasClosestByAttribute, hasTopClosestByTag,
+    hasClosestBlock, hasClosestByAttribute, hasClosestByClassName, hasTopClosestByTag,
 } from "../util/hasClosest";
 import { hasClosestByTag} from "../util/hasClosestByHeadings";
 import {log} from "../util/log";
@@ -220,6 +220,11 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
             .forEach((item: HTMLElement) => {
                 processCodeRender(item, vditor);
             });
+
+        const mathBlock = hasClosestByClassName(range.startContainer, 'vditor-wysiwyg__block');
+        if (mathBlock) {
+            mathBlock.lastElementChild.classList.add('math-block-preview');
+        }
 
         if (event && (event.inputType === "deleteContentBackward" || event.inputType === "deleteContentForward") &&
             vditor.options.comment.enable) {

@@ -63,6 +63,33 @@
     <button onclick="window.vditor.setTheme('light', 'light', 'github');document.querySelector('body').style.backgroundColor=''">
         Light Mode
     </button> &nbsp; &nbsp;
+    <button id="changeKaTex">切换KaTex</button>
+    <button id="changeMathJax">切换MathJax</button>
+    <button id="displayLineNumber">代码块显示行号</button>
+    <button id="hideLineNumber">代码块隐藏行号</button>
+    <button id="autoSpace">自动加空格</button>
+    <button id="noAutoSpace">禁止自动加空格</button>
+    <button id="autoFixTermTypo">自动术语矫正</button>
+    <button id="noAutoFixTermTypo">禁止自动术语矫正</button>
+    <button id="changeCodeTheme">修改代码主题</button>
+    <button id="setPopoverToolbar">设置悬浮工具框</button>
+    <button id="displaySVPreview">显示SV渲染区域</button>
+    <button id="hideSVPreview">隐藏SV渲染区域</button>
+    <button id="editable">可以编辑</button>
+    <button id="unEditable">不可以编辑</button>
+
+
+
+    <input type="text" id="search-box">
+    <button id="search-open">搜索</button>
+    <button id="search-close">关闭</button>
+    <button id="search-prev">上一个</button>
+    <button id="search-next">下一个</button>
+
+    <input type="text" id="replace-box">
+    <button id="replace-button">替换</button>
+    <button id="replace-all-button">全部替换</button>
+    
     <select autocomplete="off" onchange="setLang(this.value)">
         <option selected="selected" value="zh_CN">zh_CN</option>
         <option value="zh_TW">zh_TW</option>

@@ -9,15 +9,12 @@ export const getEditorRange = (vditor: IVditor) => {
     if (getSelection().rangeCount > 0) {
         range = getSelection().getRangeAt(0);
         if (element.isEqualNode(range.startContainer) || element.contains(range.startContainer)) {
-            console.log(1)
             return range;
         }
     }
     if (vditor[vditor.currentMode].range) { // ????
-        console.log(2)
         return vditor[vditor.currentMode].range;
     }
-    console.log(3)
     element.focus();
     range = element.ownerDocument.createRange();
     range.setStart(element, 0);
