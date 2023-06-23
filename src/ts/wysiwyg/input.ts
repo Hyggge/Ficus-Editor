@@ -21,6 +21,8 @@ export const input = (vditor: IVditor, range: Range, event?: InputEvent) => {
         ['{', '}'], 
         ['《', '》'], 
         ['（', '）'],
+        ['\'', '\''],
+        ['"', '"'],
     ])
 
     if (!blockElement) {

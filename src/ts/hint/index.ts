@@ -56,7 +56,7 @@ export class Hint {
         hintExtends.push({key: ":"});
 
         this.c0.forEach(
-            (item) => {this.latexList.push(item) + '<wbr>'}
+            (item) => {this.latexList.push(item + '<wbr>')}
         )
         this.c1.forEach(
             (item) => {this.latexList.push(item + '{<wbr>}')}
@@ -64,7 +64,7 @@ export class Hint {
         this.c2.forEach(
             (item) => {this.latexList.push(item + '{<wbr>}{}')}
         )
-        this.latexList.push('begin{}<wbr>')
+        this.latexList.push('begin{<wbr>}')
 
         hintExtends.push(
             {
@@ -110,6 +110,10 @@ export class Hint {
                 let ret :IHintData[]= []
                 if (key != "")
                 {
+                    if (key.indexOf('}') != -1)
+                    {
+                        return ret
+                    }
                     this.environments.forEach(
                         (kw) =>
                         {
@@ -445,6 +449,7 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         this.lastIndex = -1;
         this.splitChar = "";
 
+
         // 找到最后一个出现的 key
         extend.forEach((item) => {
             const currentLastIndex = currentLineValue.lastIndexOf(item.key);
@@ -455,7 +460,8 @@ ${i === 0 ? "class='vditor-hint--current'" : ""}> ${html}</button>`;
         });
 
         let key;
-        if (this.lastIndex === -1) {
+        // 避免因为 ‘\\‘ 引起的误会，（结尾是多个 \ 的时候默认不弹出补全选项
+        if (this.lastIndex === -1 || (currentLineValue.length > 2 && currentLineValue.substring(currentLineValue.length - 2) === '\\\\')) {
             return key;
         }
         const lineArray = currentLineValue.split(this.splitChar);
